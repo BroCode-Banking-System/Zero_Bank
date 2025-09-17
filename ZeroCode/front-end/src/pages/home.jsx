@@ -527,7 +527,5 @@ function CardSlider() {
   );
 }
 
-
-
 export { SlideWorks, NoticeBar, CardSlider, BankForm };
 export default HomeCarousel;
