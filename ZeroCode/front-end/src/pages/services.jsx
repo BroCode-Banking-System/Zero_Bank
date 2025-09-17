@@ -11,6 +11,7 @@ import purposeImage from "../assets/img/image11.png";
 function Services() {
   const navigate = useNavigate();
   const [selectedService, setSelectedService] = useState(null);
+  const [modalType, setModalType] = useState("items"); // "items" or "desc"
 
   // Purpose Points
   const points = [
@@ -19,13 +20,15 @@ function Services() {
     "Credit and Debit Card facilities for easy transactions worldwide.",
     "Internet and Mobile Banking for 24/7 account access.",
     "Insurance services to safeguard your health, life, and assets.",
-    "Investment and Wealth Management solutions for financial growth."
+    "Investment and Wealth Management solutions for financial growth.",
   ];
 
   const servicesData = [
     {
       title: "Accounts",
       descriptions: "Manage your accounts with ease.",
+      details:
+        "Our accounts offer flexible options for individuals and businesses, with online access, debit cards, and secure money management.",
       image: breakcrumbImage1,
       items: [
         { label: "Savings Account", path: "/savings-account" },
@@ -35,25 +38,45 @@ function Services() {
     {
       title: "Loans",
       descriptions: "Get the funds you need with our loan services.",
+      details:
+        "From home loans to car loans, we provide affordable interest rates and easy repayment options to help you achieve your goals.",
       image: breadcrumbImage2,
       items: [
         { label: "Home Loan", path: "/home-loan" },
         { label: "Car Loan", path: "/car-loan" },
+        { label: "Personal Loan", path: "/personal-loan" },
+        { label: "Retail Trade Loan", path: "/retail-trade-loan" },
+        { label: "Loan Against Property", path: "/loan-against-property" },
+        { label: "Gold Loan", path: "/gold-loan" },
+        { label: "Working Capital Loan", path: "/working-capital-loan" },
+        { label: "Housing Loan", path: "/housing-loan" },
+        { label: "Loan Against Warehouse Receipts", path: "/loan-against-warehouse-receipts" },
       ],
     },
     {
       title: "Insurance",
       descriptions: "Protect yourself with our insurance plans.",
+      details:
+        "Choose from a wide range of insurance policies covering health, vehicles, and life, ensuring peace of mind for you and your family.",
       image: breadcrumbImage3,
       items: [
         { label: "Health Insurance", path: "/health-insurance" },
+        { label: "Life Insurance", path: "/life-insurance" },
         { label: "Car Insurance", path: "/car-insurance" },
+        { label: "General Insurance", path: "/general-insurance" },
       ],
     },
   ];
 
-  const handleOpenModal = (service) => setSelectedService(service);
-  const handleCloseModal = () => setSelectedService(null);
+  const handleOpenModal = (service, type = "items") => {
+    setSelectedService(service);
+    setModalType(type);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedService(null);
+    setModalType("items");
+  };
 
   const handleItemClick = (path) => {
     setSelectedService(null);
@@ -134,13 +157,16 @@ function Services() {
                   <p className="text-muted">{service.descriptions}</p>
 
                   <div className="d-flex justify-content-between mt-3">
-                    <a href="#" className="btn btn-primary">
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleOpenModal(service, "desc")}
+                    >
                       Learn More
-                    </a>
+                    </button>
                     <button
                       className="btn btn-outline-primary rounded-circle"
                       style={{ width: "40px", height: "40px" }}
-                      onClick={() => handleOpenModal(service)}
+                      onClick={() => handleOpenModal(service, "items")}
                     >
                       <FaArrowRight />
                     </button>
@@ -160,24 +186,28 @@ function Services() {
         >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
-              <div className="modal-header">
+              <div className="modal-header" style={{ backgroundColor: "#3498db", color: "#fff" }}>
                 <h5>{selectedService.title}</h5>
-                <button className="btn-close" onClick={handleCloseModal}></button>
+                <button className="btn-close" style={{ filter: "invert(1)" }} onClick={handleCloseModal}></button>
               </div>
               <div className="modal-body">
-                <ul className="list-unstyled">
-                  {selectedService.items.map((item, i) => (
-                    <li
-                      key={i}
-                      className="mb-2 text-primary fw-bold"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => handleItemClick(item.path)}
-                    >
-                      <FaCheckCircle className="me-2" />
-                      {item.label}
-                    </li>
-                  ))}
-                </ul>
+                {modalType === "desc" ? (
+                  <p>{selectedService.details}</p>
+                ) : (
+                  <ul className="list-unstyled">
+                    {selectedService.items.map((item, i) => (
+                      <li
+                        key={i}
+                        className="mb-2 text-primary fw-bold"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleItemClick(item.path)}
+                      >
+                        <FaCheckCircle className="me-2" />
+                        {item.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={handleCloseModal}>

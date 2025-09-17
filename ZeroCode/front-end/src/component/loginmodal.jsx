@@ -1,171 +1,150 @@
 import React, { useState } from "react";
+import { FaUser, FaLock } from "react-icons/fa"; // optional icons
+import axios from "axios";
 
 const LoginModal = () => {
   const [activeTab, setActiveTab] = useState("customer");
+  const [formData, setFormData] = useState({
+    customer: { userId: "", password: "" },
+    employee: { employeeId: "", password: "" },
+    admin: { username: "", password: "" },
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const getBackgroundColor = () => {
-    switch (activeTab) {
-      case "customer":
-        return "#e6f7ff"; // light blue
-      case "employee":
-        return "#fff7e6"; // light orange
-      case "admin":
-        return "#fce4ec"; // light pink
-      default:
-        return "#ffffff";
+  const handleChange = (role, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [role]: { ...prev[role], [field]: value },
+    }));
+  };
+
+  const handleSubmit = async (role) => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axios.post("/api/auth/login", {
+        role,
+        ...formData[role],
+      });
+
+      console.log("Login Success:", response.data);
+      
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div
-      className="modal fade"
-      id="loginModal"
-      tabIndex="-1"
-      aria-labelledby="loginModalLabel"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog">
-        <div className="modal-content">
+  const tabConfig = {
+    customer: {
+      bg: "#e6f7ff",
+      fields: [
+        { id: "userId", label: "User ID", type: "text", icon: <FaUser /> },
+        { id: "password", label: "Password", type: "password", icon: <FaLock /> },
+      ],
+    },
+    employee: {
+      bg: "#fff7e6",
+      fields: [
+        { id: "employeeId", label: "Employee ID", type: "text", icon: <FaUser /> },
+        { id: "password", label: "Password", type: "password", icon: <FaLock /> },
+      ],
+    },
+    admin: {
+      bg: "#fce4ec",
+      fields: [
+        { id: "username", label: "Username", type: "text", icon: <FaUser /> },
+        { id: "password", label: "Password", type: "password", icon: <FaLock /> },
+      ],
+    },
+  };
 
-          {/* Modal Header */}
-          <div className="modal-header">
-            <h5 className="modal-title" id="loginModalLabel">Login</h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+  return (
+    <div className="modal fade" id="loginModal" tabIndex="-1" aria-hidden="true">
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content shadow-lg border-0 rounded-4 overflow-hidden">
+
+          {/* Header */}
+          <div className="modal-header border-0 bg-light">
+            <h5 className="modal-title fw-bold text-primary">Login</h5>
+            <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
-          {/* Modal Body with Tabs */}
-          <div className="modal-body" style={{ backgroundColor: getBackgroundColor() }}>
-
+          {/* Body */}
+          <div className="modal-body p-4" style={{ backgroundColor: tabConfig[activeTab].bg }}>
+            
             {/* Tabs */}
-            <ul className="nav nav-tabs mb-3" id="loginTabs" role="tablist">
-              <li className="nav-item" role="presentation">
-                <button
-                  className={`nav-link ${activeTab === "customer" ? "active" : ""}`}
-                  id="customer-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#customer"
-                  type="button"
-                  role="tab"
-                  aria-controls="customer"
-                  aria-selected={activeTab === "customer"}
-                  onClick={() => setActiveTab("customer")}
-                >
-                  Customer
-                </button>
-              </li>
-              <li className="nav-item" role="presentation">
-                <button
-                  className={`nav-link ${activeTab === "employee" ? "active" : ""}`}
-                  id="employee-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#employee"
-                  type="button"
-                  role="tab"
-                  aria-controls="employee"
-                  aria-selected={activeTab === "employee"}
-                  onClick={() => setActiveTab("employee")}
-                >
-                  Employee
-                </button>
-              </li>
-              <li className="nav-item" role="presentation">
-                <button
-                  className={`nav-link ${activeTab === "admin" ? "active" : ""}`}
-                  id="admin-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#admin"
-                  type="button"
-                  role="tab"
-                  aria-controls="admin"
-                  aria-selected={activeTab === "admin"}
-                  onClick={() => setActiveTab("admin")}
-                >
-                  Admin
-                </button>
-              </li>
+            <ul className="nav nav-pills mb-4 justify-content-center">
+              {Object.keys(tabConfig).map((role) => (
+                <li className="nav-item" key={role}>
+                  <button
+                    className={`nav-link px-4 ${activeTab === role ? "active fw-semibold" : ""}`}
+                    onClick={() => setActiveTab(role)}
+                  >
+                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                  </button>
+                </li>
+              ))}
             </ul>
 
-            {/* Tab Content */}
-            <div className="tab-content" id="loginTabsContent">
-              <div className={`tab-pane fade ${activeTab === "customer" ? "show active" : ""}`} id="customer" role="tabpanel">
-                <form>
-                  <div className="mb-3">
-                    <label htmlFor="customerEmail" className="form-label">UserID</label>
-                    <input type="email" className="form-control" id="customerEmail" placeholder="Enter UserID" />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="customerPassword" className="form-label">Password</label>
-                    <input type="password" className="form-control" id="customerPassword" placeholder="Password" />
+            {/* Error Alert */}
+            {error && (
+              <div className="alert alert-danger py-2 text-center">{error}</div>
+            )}
 
+            {/* Dynamic Form */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(activeTab);
+              }}
+            >
+              {tabConfig[activeTab].fields.map((field) => (
+                <div className="mb-3" key={field.id}>
+                  <label htmlFor={`${activeTab}-${field.id}`} className="form-label">
+                    {field.label}
+                  </label>
+                  <div className="input-group">
+                    <span className="input-group-text">{field.icon}</span>
+                    <input
+                      type={field.type}
+                      className="form-control"
+                      id={`${activeTab}-${field.id}`}
+                      placeholder={`Enter ${field.label}`}
+                      value={formData[activeTab][field.id]}
+                      onChange={(e) => handleChange(activeTab, field.id, e.target.value)}
+                      required
+                    />
                   </div>
+                </div>
+              ))}
 
-                  <div className="modal-footer d-flex justify-content-between align-items-center">
-                    <div>
-                      <a href="#" className="text-primary small text-decoration-none">Forgot Password?</a>
-                    </div>
-                    <div>
-                      <button type="button" className="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                      <button type="button" className="btn btn-primary">Login</button>
-                    </div>
-                  </div>
-
-                </form>
+              {/* Footer */}
+              <div className="d-flex justify-content-between align-items-center mt-4">
+                <a href="#" className="small text-primary text-decoration-none">Forgot Password?</a>
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-light me-2"
+                    data-bs-dismiss="modal"
+                    disabled={loading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary px-4"
+                    disabled={loading}
+                  >
+                    {loading ? "Logging in..." : "Login"}
+                  </button>
+                </div>
               </div>
+            </form>
 
-              <div className={`tab-pane fade ${activeTab === "employee" ? "show active" : ""}`} id="employee" role="tabpanel">
-                <form>
-                  <div className="mb-3">
-                    <label htmlFor="employeeId" className="form-label">Employee ID</label>
-                    <input type="text" className="form-control" id="employeeId" placeholder="Enter Employee ID" />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="employeePassword" className="form-label">Password</label>
-                    <input type="password" className="form-control" id="employeePassword" placeholder="Password" />
-                  </div>
-                  <div className="modal-footer d-flex justify-content-between align-items-center">
-                    <div>
-                      <a href="#" className="text-primary small text-decoration-none">Forgot Password?</a>
-                    </div>
-                    <div>
-                      <button type="button" className="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                      <button type="button" className="btn btn-primary">Login</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-
-              <div className={`tab-pane fade ${activeTab === "admin" ? "show active" : ""}`} id="admin" role="tabpanel">
-                <form>
-                  <div className="mb-3">
-                    <label htmlFor="adminUsername" className="form-label">Username</label>
-                    <input type="text" className="form-control" id="adminUsername" placeholder="Enter Username" />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="adminPassword" className="form-label">Password</label>
-                    <input type="password" className="form-control" id="adminPassword" placeholder="Password" />
-                  </div>
-                  <div className="modal-footer d-flex justify-content-between align-items-center">
-                    <div>
-                      <a href="#" className="text-primary small text-decoration-none">Forgot Password?</a>
-                    </div>
-                    <div>
-                      <button type="button" className="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                      <button type="button" className="btn btn-primary">Login</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
           </div>
-
-          {/* Modal Footer */}
-
-
         </div>
       </div>
     </div>
