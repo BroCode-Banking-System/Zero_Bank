@@ -397,46 +397,55 @@ function CardSlider() {
     {
       title: "Saving Account",
       text: "Open a savings account with interest rates and digital banking features.",
+      path: "/savings-account",
       image: img4
     },
     {
       title: "Current Account",
       text: "Manage your business transactions with our current account solutions.",
+      path: "/current-account",
       image: img5
     },
     {
       title: "Home Loan",
       text: "Affordable home loans with flexible repayment options and low EMIs.",
+      path: "/home-loan",
       image: img6
     },
     {
       title: "Gold Loan",
       text: "Leverage your gold for quick funds with minimal documentation.",
+      path: "/gold-loan",
       image: img7
     },
     {
       title: "Business Loan",
       text: "Scale your business with our customized business loan products.",
+      path: "/business-loan",
       image: img8
     },
     {
       title: "Agriculture Loan",
       text: "Loans designed for farmers to meet agricultural needs.",
+      path: "/agriculture-loan",
       image: img9
     },
     {
       title: "Health Insurance",
       text: "Comprehensive health insurance for you and your family.",
+      path: "/health-insurance",
       image: img10
     },
     {
       title: "General Insurance",
       text: "Protect your assets with our general insurance policies.",
+      path: "/general-insurance",
       image: img11
     },
     {
       title: "Life Insurance",
       text: "Ensure your family’s future with our life insurance plans.",
+      path: "/life-insurance",
       image: img12
     },
   ];
@@ -452,7 +461,7 @@ function CardSlider() {
               </div>
               <h5 className="card-title">{notice.title}</h5>
               <p className="card-text">{notice.text}</p>
-              <a href="#" className="btn btn-primary">Learn more</a>
+              <a href={notice.path} className="btn btn-primary">Apply Now</a>
             </div>
           </div>
         ))}
@@ -526,6 +535,8 @@ function CardSlider() {
     </div>
   );
 }
+
+
 
 export { SlideWorks, NoticeBar, CardSlider, BankForm };
 export default HomeCarousel;

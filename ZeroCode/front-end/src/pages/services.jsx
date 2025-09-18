@@ -43,14 +43,12 @@ function Services() {
       image: breadcrumbImage2,
       items: [
         { label: "Home Loan", path: "/home-loan" },
-        { label: "Car Loan", path: "/car-loan" },
-        { label: "Personal Loan", path: "/personal-loan" },
-        { label: "Retail Trade Loan", path: "/retail-trade-loan" },
-        { label: "Loan Against Property", path: "/loan-against-property" },
         { label: "Gold Loan", path: "/gold-loan" },
+        { label: "Business Loan", path: "/business-loan" },
+        { label: "Agriculture Loan", path: "/agriculture-loan" },
+        { label: "Loan Against Property", path: "/loan-against-property" },
         { label: "Working Capital Loan", path: "/working-capital-loan" },
         { label: "Housing Loan", path: "/housing-loan" },
-        { label: "Loan Against Warehouse Receipts", path: "/loan-against-warehouse-receipts" },
       ],
     },
     {
@@ -92,7 +90,7 @@ function Services() {
           backgroundImage: `url(${breadcrumbImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          height: "250px",
+          height: "421px",
         }}
       >
         <div className="container py-4">

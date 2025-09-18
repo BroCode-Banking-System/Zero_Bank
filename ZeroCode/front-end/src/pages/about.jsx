@@ -46,7 +46,7 @@ function About() {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          height: '250px'
+          height: '421px'
         }}
       >
         <div className="container py-4">
