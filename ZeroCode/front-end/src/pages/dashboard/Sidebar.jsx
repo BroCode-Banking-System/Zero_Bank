@@ -31,23 +31,23 @@ export default function Sidebar() {
           <div className="collapse" id="transactionsSubMenu">
             <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-3">
               <li>
-                <Link to="/transactions/fund-transfer" className="nav-link">Fund Transfer</Link>
+                <Link to="/dashboard/fund-transfer" className="nav-link">Fund Transfer</Link>
               </li>
               <li>
-                <Link to="/transactions/deposit-history" className="nav-link">Deposit History</Link>
+                <Link to="/dashboard/deposit-history" className="nav-link">Deposit History</Link>
               </li>
               <li>
-                <Link to="/transactions/withdrawal-history" className="nav-link">Withdrawal History</Link>
+                <Link to="/dashboard/withdrawal-history" className="nav-link">Withdrawal History</Link>
               </li>
             </ul>
           </div>
         </li>
 
         <li>
-          <Link to="/profile" className="nav-link">Profile</Link>
+          <Link to="/dashboard/profile" className="nav-link">Profile</Link>
         </li>
         <li>
-          <Link to="/settings" className="nav-link">Settings</Link>
+          <Link to="/dashboard/settings" className="nav-link">Settings</Link>
         </li>
       </ul>
     </div>

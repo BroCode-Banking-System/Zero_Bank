@@ -19,7 +19,6 @@ import img12 from "../assets/img/image22.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaPlay, FaPause } from "react-icons/fa";
 
-
 function HomeCarousel() {
   return (
     <>
@@ -110,7 +109,6 @@ function SlideWorks() {
     </div>
   );
 }
-
 
 function NoticeBar({ inline = false }) {
   const notices = [
@@ -391,61 +389,53 @@ function BankForm({ inline = false }) {
   );
 }
 
-
 function CardSlider() {
+  const [selectedNotice, setSelectedNotice] = useState(null);
+
   const notices = [
     {
       title: "Saving Account",
-      text: "Open a savings account with interest rates and digital banking features.",
-      path: "/savings-account",
+      description: "Secure your money while earning attractive interest. Enjoy easy online access, digital banking features, and flexible options for deposits and withdrawals to manage your finances effortlessly. For further assistance, please contact our customer service.",
       image: img4
     },
     {
       title: "Current Account",
-      text: "Manage your business transactions with our current account solutions.",
-      path: "/current-account",
+      description: "Tailored for businesses, offering seamless transactions, real-time banking, and dedicated services. Manage payments, receivables, and cash flow efficiently while enjoying priority banking support. For further assistance, please contact our customer service.",
       image: img5
     },
     {
       title: "Home Loan",
-      text: "Affordable home loans with flexible repayment options and low EMIs.",
-      path: "/home-loan",
+      description: "Achieve your dream home with low-interest loans and flexible repayment options. Quick approvals and personalized plans make homeownership simple and affordable for every family. For further assistance, please contact our customer service.",
       image: img6
     },
     {
       title: "Gold Loan",
-      text: "Leverage your gold for quick funds with minimal documentation.",
-      path: "/gold-loan",
+      description: "Unlock instant funds using your gold as collateral. Minimal documentation, competitive interest rates, and quick disbursement ensure easy access to short-term financial needs. For further assistance, please contact our customer service.",
       image: img7
     },
     {
       title: "Business Loan",
-      text: "Scale your business with our customized business loan products.",
-      path: "/business-loan",
+      description: "Scale and grow your business with customized loan solutions. Flexible repayment terms, fast approvals, and competitive interest rates help you achieve operational and expansion goals. For further assistance, please contact our customer service.",
       image: img8
     },
     {
       title: "Agriculture Loan",
-      text: "Loans designed for farmers to meet agricultural needs.",
-      path: "/agriculture-loan",
+      description: "Support your farming activities with loans for seeds, equipment, or irrigation. Easy access, timely disbursement, and affordable interest rates empower farmers to enhance productivity. For further assistance, please contact our customer service.",
       image: img9
     },
     {
       title: "Health Insurance",
-      text: "Comprehensive health insurance for you and your family.",
-      path: "/health-insurance",
+      description: "Protect yourself and your family with our comprehensive health insurance plans covering hospitalization and critical illnesses.",
       image: img10
     },
     {
       title: "General Insurance",
-      text: "Protect your assets with our general insurance policies.",
-      path: "/general-insurance",
+      description: "Safeguard your assets with reliable insurance policies. From vehicles to property, enjoy protection against unforeseen risks, ensuring financial stability in emergencies. For further assistance, please contact our customer service.",
       image: img11
     },
     {
       title: "Life Insurance",
-      text: "Ensure your family’s future with our life insurance plans.",
-      path: "/life-insurance",
+      description: "Secure your family’s future with life insurance plans. Ensure financial stability, pay off liabilities, and provide long-term support to your loved ones in your absence. For further assistance, please contact our customer service.",
       image: img12
     },
   ];
@@ -461,11 +451,30 @@ function CardSlider() {
               </div>
               <h5 className="card-title">{notice.title}</h5>
               <p className="card-text">{notice.text}</p>
-              <a href={notice.path} className="btn btn-primary">Apply Now</a>
+              <button
+                className="btn btn-info"
+                onClick={() => setSelectedNotice(notice)}
+              >
+                Know More
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Modal */}
+      {selectedNotice && (
+        <div className="modal-backdrop" onClick={() => setSelectedNotice(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h4>{selectedNotice.title}</h4>
+            {/* <img src={selectedNotice.image} alt={selectedNotice.title} /> */}
+            <p>{selectedNotice.description}</p>
+            <button className="btn btn-secondary" onClick={() => setSelectedNotice(null)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .card-slider-wrapper {
@@ -494,8 +503,7 @@ function CardSlider() {
         }
 
         .custom-card {
-          width: 320px;   
-          height: 260px; 
+          width: 320px; 
           flex-shrink: 0; 
           border-radius: 12px;
           padding: 10px;
@@ -531,12 +539,38 @@ function CardSlider() {
             transform: translateX(-50%);
           }
         }
+
+        /* Modal Styles */
+        .modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: #fff;
+          padding: 2rem;
+          border-radius: 12px;
+          text-align: center;
+          max-width: 500px;
+          width: 90%;
+        }
+
+        .modal-content img {
+          max-width: 100px;
+          margin-bottom: 1rem;
+        }
       `}</style>
     </div>
   );
 }
-
-
 
 export { SlideWorks, NoticeBar, CardSlider, BankForm };
 export default HomeCarousel;

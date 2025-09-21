@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaArrowRight } from "react-icons/fa";
 
@@ -10,10 +10,7 @@ import purposeImage from "../assets/img/image11.png";
 
 function Services() {
   const navigate = useNavigate();
-  const [selectedService, setSelectedService] = useState(null);
-  const [modalType, setModalType] = useState("items"); // "items" or "desc"
 
-  // Purpose Points
   const points = [
     "Savings and Current Accounts to manage your money securely.",
     "Personal, Home, and Car Loans with flexible repayment options.",
@@ -27,59 +24,22 @@ function Services() {
     {
       title: "Accounts",
       descriptions: "Manage your accounts with ease.",
-      details:
-        "Our accounts offer flexible options for individuals and businesses, with online access, debit cards, and secure money management.",
       image: breakcrumbImage1,
-      items: [
-        { label: "Savings Account", path: "/savings-account" },
-        { label: "Current Account", path: "/current-account" },
-      ],
+      path: "/account", 
     },
     {
       title: "Loans",
       descriptions: "Get the funds you need with our loan services.",
-      details:
-        "From home loans to car loans, we provide affordable interest rates and easy repayment options to help you achieve your goals.",
       image: breadcrumbImage2,
-      items: [
-        { label: "Home Loan", path: "/home-loan" },
-        { label: "Gold Loan", path: "/gold-loan" },
-        { label: "Business Loan", path: "/business-loan" },
-        { label: "Agriculture Loan", path: "/agriculture-loan" },
-        { label: "Loan Against Property", path: "/loan-against-property" },
-        { label: "Working Capital Loan", path: "/working-capital-loan" },
-        { label: "Housing Loan", path: "/housing-loan" },
-      ],
+      path: "/loan", 
     },
     {
       title: "Insurance",
       descriptions: "Protect yourself with our insurance plans.",
-      details:
-        "Choose from a wide range of insurance policies covering health, vehicles, and life, ensuring peace of mind for you and your family.",
       image: breadcrumbImage3,
-      items: [
-        { label: "Health Insurance", path: "/health-insurance" },
-        { label: "Life Insurance", path: "/life-insurance" },
-        { label: "Car Insurance", path: "/car-insurance" },
-        { label: "General Insurance", path: "/general-insurance" },
-      ],
+      path: "/insurance", 
     },
   ];
-
-  const handleOpenModal = (service, type = "items") => {
-    setSelectedService(service);
-    setModalType(type);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedService(null);
-    setModalType("items");
-  };
-
-  const handleItemClick = (path) => {
-    setSelectedService(null);
-    navigate(path);
-  };
 
   return (
     <>
@@ -138,7 +98,7 @@ function Services() {
         </div>
       </div>
 
-      {/* Cards */}
+      {/* Service Cards */}
       <div className="container">
         <div className="row g-4">
           {servicesData.map((service, index) => (
@@ -157,14 +117,14 @@ function Services() {
                   <div className="d-flex justify-content-between mt-3">
                     <button
                       className="btn btn-primary"
-                      onClick={() => handleOpenModal(service, "desc")}
+                      onClick={() => navigate(service.path)}
                     >
                       Learn More
                     </button>
                     <button
                       className="btn btn-outline-primary rounded-circle"
                       style={{ width: "40px", height: "40px" }}
-                      onClick={() => handleOpenModal(service, "items")}
+                      onClick={() => navigate(service.path)}
                     >
                       <FaArrowRight />
                     </button>
@@ -175,47 +135,6 @@ function Services() {
           ))}
         </div>
       </div>
-
-      {/* Modal */}
-      {selectedService && (
-        <div
-          className="modal show d-block"
-          style={{ background: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header" style={{ backgroundColor: "#3498db", color: "#fff" }}>
-                <h5>{selectedService.title}</h5>
-                <button className="btn-close" style={{ filter: "invert(1)" }} onClick={handleCloseModal}></button>
-              </div>
-              <div className="modal-body">
-                {modalType === "desc" ? (
-                  <p>{selectedService.details}</p>
-                ) : (
-                  <ul className="list-unstyled">
-                    {selectedService.items.map((item, i) => (
-                      <li
-                        key={i}
-                        className="mb-2 text-primary fw-bold"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleItemClick(item.path)}
-                      >
-                        <FaCheckCircle className="me-2" />
-                        {item.label}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={handleCloseModal}>
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
