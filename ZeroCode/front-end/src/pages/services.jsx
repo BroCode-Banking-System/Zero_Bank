@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheckCircle, FaArrowRight } from "react-icons/fa";
+import { Modal, Button } from "react-bootstrap";
 
 import breadcrumbImage from "../assets/img/image8.png";
 import breakcrumbImage1 from "../assets/img/image10.png";
@@ -10,6 +11,8 @@ import purposeImage from "../assets/img/image11.png";
 
 function Services() {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
 
   const points = [
     "Savings and Current Accounts to manage your money securely.",
@@ -23,23 +26,28 @@ function Services() {
   const servicesData = [
     {
       title: "Accounts",
-      descriptions: "Manage your accounts with ease.",
+      descriptions: "Easily manage your savings and current accounts with secure banking solutions, convenient digital access, and reliable support designed to help you organize and grow your finances efficiently.",
       image: breakcrumbImage1,
-      path: "/account", 
+      path: "/account",
     },
     {
       title: "Loans",
-      descriptions: "Get the funds you need with our loan services.",
+      descriptions: "Get flexible personal, home, or car loans with affordable interest rates, simple documentation, and quick approvals to meet your financial goals without unnecessary stress or delays.",
       image: breadcrumbImage2,
-      path: "/loan", 
+      path: "/loan",
     },
     {
       title: "Insurance",
-      descriptions: "Protect yourself with our insurance plans.",
+      descriptions: "Protect your health, life, and valuable assets with comprehensive insurance plans that offer peace of mind, financial security, and long-term protection for you and your loved ones.",
       image: breadcrumbImage3,
-      path: "/insurance", 
+      path: "/insurance",
     },
   ];
+
+  const handleLearnMore = (service) => {
+    setSelectedService(service);
+    setShowModal(true);
+  };
 
   return (
     <>
@@ -112,12 +120,12 @@ function Services() {
                 />
                 <div className="card-body d-flex flex-column justify-content-between">
                   <h5>{service.title}</h5>
-                  <p className="text-muted">{service.descriptions}</p>
+                  {/* <p className="text-muted">{service.descriptions}</p> */}
 
                   <div className="d-flex justify-content-between mt-3">
                     <button
                       className="btn btn-primary"
-                      onClick={() => navigate(service.path)}
+                      onClick={() => handleLearnMore(service)}
                     >
                       Learn More
                     </button>
@@ -135,6 +143,24 @@ function Services() {
           ))}
         </div>
       </div>
+
+      {/* Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedService?.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{selectedService?.descriptions}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={() => navigate(selectedService?.path)}>
+            Go to Page
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

@@ -23,7 +23,6 @@ import DashboardWithdrawalHistory from "./pages/dashboard/WithdrawalHistory";
 import DashboardProfile from "./pages/dashboard/Profile";
 
 
-
 function App() {
   const isLoggedIn = true; // replace with actual auth check
   const location = useLocation();

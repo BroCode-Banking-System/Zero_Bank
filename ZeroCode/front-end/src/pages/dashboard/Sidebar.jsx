@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Sidebar() {
   return (
     <div
-      className="d-flex flex-column flex-shrink-0 p-3 bg-light border-end"
+      className="d-flex flex-column flex-shrink-0 p-3 bg-light border-end py-5"
       style={{ width: "220px", marginTop: "56px", minHeight: "calc(100vh - 56px)" }}
     >
       <h5 className="text-primary">Menu</h5>
