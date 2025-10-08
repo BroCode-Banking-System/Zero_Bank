@@ -23,7 +23,7 @@ const LoginModal = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.post("/api/auth/login", {
+      const response = await axios.post("http://localhost:8000/api/auth/login", {
         role,
         ...formData[role],
       });
@@ -76,7 +76,7 @@ const LoginModal = () => {
           <div className="modal-body p-4" style={{ backgroundColor: tabConfig[activeTab].bg }}>
             
             {/* Tabs */}
-            <ul className="nav nav-pills mb-4 justify-content-center">
+            <ul className="nav nav-pills mb-4">
               {Object.keys(tabConfig).map((role) => (
                 <li className="nav-item" key={role}>
                   <button

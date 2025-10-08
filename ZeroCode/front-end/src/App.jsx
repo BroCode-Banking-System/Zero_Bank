@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import Navbar from "./component/navber";
 import Home from "./pages/home";
@@ -10,21 +12,20 @@ import OpenInsurance from "./pages/insurance";
 import LoginModal from "./component/loginmodal";
 import Footer from "./component/footer";
 
-import Header from "./pages/dashboard/Header";
+//import Header from "./pages/dashboard/Header";
 import DashFooter from "./pages/dashboard/Footer";
-import Dashboard from "./pages/dashboard/dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 import DashboardSidebar from "./pages/dashboard/Sidebar";
 import DashboardAccount from "./pages/dashboard/Accounts";
 import DashboardFundTransfer from "./pages/dashboard/FundTransfer";
 import DashboardDepositHistory from "./pages/dashboard/DepositHistory";
-// import DashboardLoginPage from "./pages/dashboard/LoginPage";
 import DashboardSettings from "./pages/dashboard/Settings";
 import DashboardWithdrawalHistory from "./pages/dashboard/WithdrawalHistory";
 import DashboardProfile from "./pages/dashboard/Profile";
 
 
 function App() {
-  const isLoggedIn = true; // replace with actual auth check
+  const isLoggedIn = true;
   const location = useLocation();
 
   // check if route starts with /dashboard
@@ -62,9 +63,7 @@ function App() {
 // Dashboard Layout
 function DashboardWrapper() {
   return (
-    <div className="dashboard-layout">
-      <Header />
-
+    <div>
       <div className="dashboard-body">
         <DashboardSidebar />
 
@@ -72,7 +71,7 @@ function DashboardWrapper() {
         <div className="dashboard-content">
           <Routes>
             {/* Default route when you go to /dashboard */}
-            <Route index element={<Dashboard />} />
+            <Route path="" element={<Dashboard />} />
 
             {/* Named nested routes */}
             <Route path="accounts" element={<DashboardAccount />} />
@@ -81,9 +80,6 @@ function DashboardWrapper() {
             <Route path="settings" element={<DashboardSettings />} />
             <Route path="withdrawal-history" element={<DashboardWithdrawalHistory />} />
             <Route path="profile" element={<DashboardProfile />} />
-
-            {/* Example of future pages */}
-            {/* <Route path="profile" element={<Profile />} /> */}
           </Routes>
         </div>
       </div>
@@ -102,7 +98,7 @@ function DashboardWrapper() {
           flex: 1;
           }
           .dashboard-content {
-            margin-top: 50px; 
+            margin-top: 20px; 
             flex: 1;
             padding: 20px;
         }

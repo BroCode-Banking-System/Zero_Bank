@@ -1,30 +1,40 @@
-export default function DepositHistory() {
-  return (
-    <div>
-      <h2>Deposit History</h2>
-      <p>List of all deposits made to your account.</p>
+import Card from "react-bootstrap/Card";
 
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Mode</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2025-09-01</td>
-            <td>₹10,000</td>
-            <td>Cash</td>
-          </tr>
-          <tr>
-            <td>2025-08-15</td>
-            <td>₹5,000</td>
-            <td>Cheque</td>
-          </tr>
-        </tbody>
-      </table>
+export default function DepositHistory() {
+  const deposits = [
+    { date: "2025-09-01", amount: "₹10,000", mode: "Cash" },
+    { date: "2025-08-15", amount: "₹5,000", mode: "Cheque" },
+    { date: "2025-07-30", amount: "₹7,500", mode: "Online" },
+  ];
+
+  return (
+    <div className="container mt-4">
+      <Card className="shadow rounded-4 p-3">
+        <Card.Header className="bg-primary text-white rounded-top-4 d-flex align-items-center mb-3">
+          <h4 className="mb-0">Deposit History</h4>
+        </Card.Header>
+
+        <div className="table-responsive">
+          <table className="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Mode</th>
+              </tr>
+            </thead>
+            <tbody>
+              {deposits.map((deposit, idx) => (
+                <tr key={idx}>
+                  <td>{deposit.date}</td>
+                  <td>{deposit.amount}</td>
+                  <td>{deposit.mode}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     </div>
   );
 }

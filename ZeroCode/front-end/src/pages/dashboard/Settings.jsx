@@ -1,8 +1,8 @@
 export default function Settings() {
   return (
     <div>
-      <h2>Settings</h2>
-      <p>Manage your account preferences.</p>
+      {/* <h2>Settings</h2>
+      <p>Manage your account preferences.</p> */}
 
       <form>
         <div className="mb-3">

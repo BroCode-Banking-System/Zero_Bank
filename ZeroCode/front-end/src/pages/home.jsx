@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Carousel from "react-bootstrap/Carousel";
 import Button from "react-bootstrap/Button";
 import NavbarComponent from "../component/navber";
@@ -188,6 +189,10 @@ function BankForm({ inline = false }) {
     fullName: "",
     email: "",
     mobile: "",
+    aadhaar: "",
+    aadhaardoc: null,
+    pan: "",
+    pandoc: null,
     accountType: "",
     state: "",
     city: "",
@@ -195,19 +200,66 @@ function BankForm({ inline = false }) {
     language: "",
     consent: false,
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value, type, checked, files } = e.target;
+    if (type === "file") {
+      setFormData((prev) => ({ ...prev, [name]: files && files[0] ? files[0] : null }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
-    alert("Form submitted successfully!");
+    setMessage("");
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      // Append scalar fields
+      fd.append("fullName", formData.fullName);
+      fd.append("email", formData.email);
+      fd.append("mobile", formData.mobile);
+      if (formData.aadhaar) fd.append("aadhaar", formData.aadhaar);
+      if (formData.pan) fd.append("pan", formData.pan);
+      fd.append("accountType", formData.accountType);
+      fd.append("state", formData.state);
+      fd.append("city", formData.city);
+      fd.append("branch", formData.branch);
+      fd.append("language", formData.language);
+      fd.append("consent", formData.consent ? "true" : "false");
+      // Append files if present
+      if (formData.aadhaardoc) fd.append("aadhaardoc", formData.aadhaardoc);
+      if (formData.pandoc) fd.append("pandoc", formData.pandoc);
+
+      const res = await axios.post("http://localhost:8000/api/accounts", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setMessage("Success: Account created.");
+      // Optional: reset form
+      setFormData({
+        fullName: "",
+        email: "",
+        mobile: "",
+        aadhaar: "",
+        aadhaardoc: null,
+        pan: "",
+        pandoc: null,
+        accountType: "",
+        state: "",
+        city: "",
+        branch: "",
+        language: "",
+        consent: false,
+      });
+    } catch (err) {
+      const errMsg = err?.response?.data?.message || err.message || "Failed to submit.";
+      setMessage(`Error: ${errMsg}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -215,6 +267,9 @@ function BankForm({ inline = false }) {
       <form className="p-4 shadow rounded bg-white" onSubmit={handleSubmit}>
         <div className="row g-3">
           <h5 className="mb-4 text-center">Open Your Account</h5>
+          {message && (
+            <div className={`alert ${message.startsWith("Error") ? "alert-danger" : "alert-success"}`}>{message}</div>
+          )}
           <div className="col-md-6">
             <label className="form-label">Full Name *</label>
             <input
@@ -250,6 +305,54 @@ function BankForm({ inline = false }) {
               value={formData.mobile}
               onChange={handleChange}
               placeholder="Mobile Number"
+              required
+            />
+          </div>
+          
+          <div className="col-md-6">
+            <label className="form-label">Aadhaar Number *</label>
+            <input
+              type="text"
+              className="form-control"
+              name="aadhaar"
+              value={formData.aadhaar}
+              onChange={handleChange}
+              placeholder="Aadhaar Number"
+              required
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Aadhaar Document *</label>
+            <input
+              type="file"
+              className="form-control"
+              name="aadhaardoc"
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">PAN Number *</label>
+            <input
+              type="text"
+              className="form-control"
+              name="pan"
+              value={formData.pan}
+              onChange={handleChange}
+              placeholder="PAN Number"
+              required
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">PAN Document *</label>
+            <input
+              type="file"
+              className="form-control"
+              name="pandoc"
+              onChange={handleChange}
               required
             />
           </div>
@@ -372,15 +475,9 @@ function BankForm({ inline = false }) {
             </div>
           </div>
 
-          {/*<div className="col-12 my-3">
-            <div className="border p-3 rounded bg-light text-center">
-              <p>[Google reCAPTCHA will go here]</p>
-            </div>
-          </div>*/}
-
           <div className="col-12 text-center">
-            <button type="submit" className="btn btn-primary px-5">
-              Submit
+            <button type="submit" className="btn btn-primary px-5" disabled={submitting}>
+              {submitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>
