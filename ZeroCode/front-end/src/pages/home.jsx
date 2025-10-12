@@ -136,13 +136,11 @@ function NoticeBar({ inline = false }) {
   const cardWidth = inline ? "100%" : "50%";
   return (
     <div className={wrapperClass}>
-      <div className="notice-card card shadow border-0 me-auto"
-        style={{ borderRadius: "15px", background: "#2d7e90ff", position: "relative" }}
-      >
+      <div className="notice-card card shadow border-0 me-auto" style={{ height: "728px", width: cardWidth, borderRadius: "15px", background: "#2d7e90ff", position: "relative" }}>
         <div className="card-body text-white">
           <h5 className="fw-bold mb-3 text-warning">What's New</h5>
 
-          <div className="notice-container" style={{ overflow: "hidden", height: "486px", position: "relative" }}>
+          <div className="notice-container" style={{ overflow: "hidden", height: "630px", position: "relative" }}>
             <div
               className="notice-list"
               style={{
@@ -176,7 +174,7 @@ function NoticeBar({ inline = false }) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .notice-card { width: ${cardWidth}; }
         @media (max-width: 576px) { .notice-card { width: 100%; } }
       `}</style>
@@ -264,7 +262,7 @@ function BankForm({ inline = false }) {
 
   return (
     <div className={inline ? "" : "container my-5"}>
-      <form className="p-4 shadow rounded bg-white" onSubmit={handleSubmit}>
+      <form className="p-4 shadow-sm rounded bg-white rounded-4" onSubmit={handleSubmit}>
         <div className="row g-3">
           <h5 className="mb-4 text-center">Open Your Account</h5>
           {message && (
@@ -573,7 +571,7 @@ function CardSlider() {
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .card-slider-wrapper {
           overflow: hidden;
           position: relative;

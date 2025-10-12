@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { FaUser, FaLock } from "react-icons/fa"; // optional icons
+import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginModal = () => {
-  const [activeTab, setActiveTab] = useState("customer");
+  const [activeTab, setActiveTab] = useState("user");
   const [formData, setFormData] = useState({
-    customer: { userId: "", password: "" },
+    user: { userId: "", password: "" },
     employee: { employeeId: "", password: "" },
     admin: { username: "", password: "" },
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
+
+  // handle input changes
   const handleChange = (role, field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -19,17 +23,48 @@ const LoginModal = () => {
     }));
   };
 
+  // handle login
   const handleSubmit = async (role) => {
     setLoading(true);
     setError("");
+
     try {
-      const response = await axios.post("http://localhost:8000/api/auth/login", {
-        role,
-        ...formData[role],
-      });
+      let payload = {};
+
+      if (role === "admin") {
+        payload = {
+          username: formData.admin.username,
+          password: formData.admin.password,
+          role: "admin",
+        };
+      } else if (role === "employee") {
+        payload = {
+          username: formData.employee.employeeId,
+          password: formData.employee.password,
+          role: "employee",
+        };
+      } else {
+        // user login
+        payload = {
+          username: formData.user.userId,
+          password: formData.user.password,
+          role: "user",
+        };
+      }
+
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/login",
+        payload
+      );
 
       console.log("Login Success:", response.data);
-      
+      const userRole = response.data.user.role;
+
+      // Redirect based on role
+      if (userRole === "admin") navigate("/adminDashboard");
+      else if (userRole === "employee") navigate("/employeeDashboard");
+      else if (userRole === "user") navigate("/userDashboard");
+      else navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Try again.");
     } finally {
@@ -37,23 +72,24 @@ const LoginModal = () => {
     }
   };
 
+  // consistent tab config
   const tabConfig = {
-    customer: {
-      bg: "#e6f7ff",
+    user: {
+      bg: "#f5f9ff",
       fields: [
         { id: "userId", label: "User ID", type: "text", icon: <FaUser /> },
         { id: "password", label: "Password", type: "password", icon: <FaLock /> },
       ],
     },
     employee: {
-      bg: "#fff7e6",
+      bg: "#fff8ef",
       fields: [
         { id: "employeeId", label: "Employee ID", type: "text", icon: <FaUser /> },
         { id: "password", label: "Password", type: "password", icon: <FaLock /> },
       ],
     },
     admin: {
-      bg: "#fce4ec",
+      bg: "#fef4f8",
       fields: [
         { id: "username", label: "Username", type: "text", icon: <FaUser /> },
         { id: "password", label: "Password", type: "password", icon: <FaLock /> },
@@ -61,47 +97,52 @@ const LoginModal = () => {
     },
   };
 
+  const currentTab = tabConfig[activeTab];
+
   return (
     <div className="modal fade" id="loginModal" tabIndex="-1" aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content shadow-lg border-0 rounded-4 overflow-hidden">
-
-          {/* Header */}
           <div className="modal-header border-0 bg-light">
             <h5 className="modal-title fw-bold text-primary">Login</h5>
             <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
-          {/* Body */}
-          <div className="modal-body p-4" style={{ backgroundColor: tabConfig[activeTab].bg }}>
-            
+          {/* Tab Body */}
+          <div
+            className="modal-body p-4"
+            style={{ backgroundColor: currentTab.bg }}
+          >
             {/* Tabs */}
-            <ul className="nav nav-pills mb-4">
+            <ul className="nav nav-pills mb-4 justify-content-center">
               {Object.keys(tabConfig).map((role) => (
                 <li className="nav-item" key={role}>
                   <button
-                    className={`nav-link px-4 ${activeTab === role ? "active fw-semibold" : ""}`}
+                    className={`nav-link px-4 ${
+                      activeTab === role ? "active fw-semibold" : ""
+                    }`}
                     onClick={() => setActiveTab(role)}
+                    disabled={loading}
                   >
-                    {role.charAt(0).toUpperCase() + role.slice(1)}
+                    {role === "user"
+                      ? "User"
+                      : role.charAt(0).toUpperCase() + role.slice(1)}
                   </button>
                 </li>
               ))}
             </ul>
 
             {/* Error Alert */}
-            {error && (
-              <div className="alert alert-danger py-2 text-center">{error}</div>
-            )}
+            {error && <div className="alert alert-danger py-2 text-center">{error}</div>}
 
-            {/* Dynamic Form */}
+            {/* Login Form */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit(activeTab);
               }}
             >
-              {tabConfig[activeTab].fields.map((field) => (
+              {currentTab.fields.map((field) => (
                 <div className="mb-3" key={field.id}>
                   <label htmlFor={`${activeTab}-${field.id}`} className="form-label">
                     {field.label}
@@ -115,15 +156,18 @@ const LoginModal = () => {
                       placeholder={`Enter ${field.label}`}
                       value={formData[activeTab][field.id]}
                       onChange={(e) => handleChange(activeTab, field.id, e.target.value)}
+                      disabled={loading}
                       required
                     />
                   </div>
                 </div>
               ))}
 
-              {/* Footer */}
+              {/* Buttons */}
               <div className="d-flex justify-content-between align-items-center mt-4">
-                <a href="#" className="small text-primary text-decoration-none">Forgot Password?</a>
+                <a href="#" className="small text-primary text-decoration-none">
+                  Forgot Password?
+                </a>
                 <div>
                   <button
                     type="button"
@@ -133,17 +177,12 @@ const LoginModal = () => {
                   >
                     Cancel
                   </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary px-4"
-                    disabled={loading}
-                  >
+                  <button type="submit" className="btn btn-primary px-4" disabled={loading}>
                     {loading ? "Logging in..." : "Login"}
                   </button>
                 </div>
               </div>
             </form>
-
           </div>
         </div>
       </div>
