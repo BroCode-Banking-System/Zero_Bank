@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Carousel from "react-bootstrap/Carousel";
 import Button from "react-bootstrap/Button";
-import NavbarComponent from "../component/navber";
+//import NavbarComponent from "../component/navber";
 
 import img1 from "../assets/img/image1.png";
 import img2 from "../assets/img/image2.png";
@@ -67,7 +67,7 @@ function HomeCarousel() {
           <Carousel.Caption>
             <h2 className="fw-bold">Comprehensive Financial Services</h2>
             <p>Loans, savings, and investment options tailored for you.</p>
-            <Button variant="success">Explore Services</Button>
+            <Button href="/services" variant="success">Explore Services</Button>
           </Carousel.Caption>
         </Carousel.Item>
 
@@ -113,17 +113,37 @@ function SlideWorks() {
 
 function NoticeBar({ inline = false }) {
   const notices = [
-    { date: "27 August 2025", text: "Highlight new digital services like mobile apps or UPI integration." },
-    { date: "09 June 2025", text: "Display latest interest rates, loan offers, and deposit schemes." },
-    { date: "12 June 2025", text: "Announce important regulatory updates and compliance guidelines." },
-    { date: "03 June 2025", text: "Share holiday schedules and working hours of branches." },
-    { date: "06 June 2025", text: "Provide customer awareness messages on fraud prevention and security." },
-    { date: "08 June 2025", text: "Showcase community programs, CSR activities, and financial literacy events." },
+    { 
+      date: "27 August 2025", 
+      text: "Highlight new digital services like mobile apps or UPI integration.",
+      pdf: "/pdfs/abc.pdf"
+    },
+    { 
+      date: "09 June 2025", 
+      text: "Display latest interest rates, loan offers, and deposit schemes.",
+      pdf: "/pdfs/Interest-Rates-Notice.pdf"
+    },
+    { 
+      date: "12 June 2025", 
+      text: "Announce important regulatory updates and compliance guidelines.",
+      pdf: "/pdfs/Regulatory-Updates.pdf"
+    },
+    { 
+      date: "03 June 2025", 
+      text: "Share holiday schedules and working hours of branches.",
+      pdf: "/pdfs/Holiday-Schedule.pdf"
+    },
+    { 
+      date: "06 June 2025", 
+      text: "Provide customer awareness messages on fraud prevention and security.",
+      pdf: "/pdfs/Fraud-Prevention.pdf"
+    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
+  // ✅ Auto-slide effect
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
@@ -134,22 +154,47 @@ function NoticeBar({ inline = false }) {
 
   const wrapperClass = inline ? "" : "container my-5";
   const cardWidth = inline ? "100%" : "50%";
+
   return (
     <div className={wrapperClass}>
-      <div className="notice-card card shadow border-0 me-auto" style={{ height: "728px", width: cardWidth, borderRadius: "15px", background: "#2d7e90ff", position: "relative" }}>
+      <div
+        className="notice-card card shadow border-0 me-auto"
+        style={{
+          height: "728px",
+          width: cardWidth,
+          borderRadius: "15px",
+          background: "#2d7e90ff",
+          position: "relative",
+        }}
+      >
         <div className="card-body text-white">
           <h5 className="fw-bold mb-3 text-warning">What's New</h5>
 
-          <div className="notice-container" style={{ overflow: "hidden", height: "630px", position: "relative" }}>
+          <div
+            className="notice-container"
+            style={{
+              overflow: "hidden",
+              height: "630px",
+              position: "relative",
+            }}
+          >
             <div
               className="notice-list"
               style={{
                 transform: `translateY(-${currentIndex * 100}px)`,
-                transition: "transform 0.6s ease-in-out"
+                transition: "transform 0.6s ease-in-out",
               }}
             >
               {notices.map((notice, index) => (
-                <div key={index} className="notice-item d-flex flex-column justify-content-center" style={{ height: "100px" }}>
+                <div
+                  key={index}
+                  className="notice-item d-flex flex-column justify-content-center"
+                  style={{
+                    height: "100px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => window.open(notice.pdf, "_blank")} 
+                >
                   <div className="d-flex align-items-center">
                     <span className="fw-bold me-2">{notice.date}</span>
                     <span className="badge bg-warning text-dark">NEW</span>
@@ -160,13 +205,23 @@ function NoticeBar({ inline = false }) {
             </div>
           </div>
 
-          <div className="position-absolute top-0 end-0 m-3" style={{ zIndex: 10 }}>
+          {/* Play / Pause Button */}
+          <div
+            className="position-absolute top-0 end-0 m-3"
+            style={{ zIndex: 10 }}
+          >
             {isPlaying ? (
-              <button className="btn btn-light rounded-circle" onClick={() => setIsPlaying(false)}>
+              <button
+                className="btn btn-light rounded-circle"
+                onClick={() => setIsPlaying(false)}
+              >
                 <FaPause />
               </button>
             ) : (
-              <button className="btn btn-light rounded-circle" onClick={() => setIsPlaying(true)}>
+              <button
+                className="btn btn-light rounded-circle"
+                onClick={() => setIsPlaying(true)}
+              >
                 <FaPlay />
               </button>
             )}
@@ -174,6 +229,7 @@ function NoticeBar({ inline = false }) {
         </div>
       </div>
 
+      {/* Responsive CSS */}
       <style>{`
         .notice-card { width: ${cardWidth}; }
         @media (max-width: 576px) { .notice-card { width: 100%; } }
@@ -306,7 +362,7 @@ function BankForm({ inline = false }) {
               required
             />
           </div>
-          
+
           <div className="col-md-6">
             <label className="form-label">Aadhaar Number *</label>
             <input

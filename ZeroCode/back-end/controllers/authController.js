@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const AdminUser = require("../models/adminModel");
+const Employee = require("../models/employeeModel");
 const User = require("../models/userModel");
 
 const loginUser = async (req, res) => {
@@ -14,6 +15,8 @@ const loginUser = async (req, res) => {
 
     if (role === "admin") {
       userDoc = await AdminUser.findOne({ username });
+    } else if (role === "employee") {
+      userDoc = await Employee.findOne({ username });
     } else if (role === "user") {
       userDoc = await User.findOne({ username });
     } else {
@@ -31,7 +34,12 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: `${role} login successful`,
-      redirectUrl: role === "admin" ? "/adminDashboard" : "/",
+      redirectUrl:
+        role === "admin"
+          ? "/adminDashboard"
+          : role === "employee"
+          ? "/employeeDashboard"
+          : "/",
       user: {
         id: userDoc._id,
         username: userDoc.username,

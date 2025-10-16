@@ -35,88 +35,88 @@ function Loan() {
     },
   ];
 
-  const renderForm = () => {
-    const formFields = {
-      home: (
-        <>
-          <div className="mb-3">
-            <label className="form-label">Full Name</label>
-            <input type="text" className="form-control" placeholder="Enter your full name" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Property Value</label>
-            <input type="number" className="form-control" placeholder="Enter property value" />
-          </div>
-        </>
-      ),
-      gold: (
-        <>
-          <div className="mb-3">
-            <label className="form-label">Full Name</label>
-            <input type="text" className="form-control" placeholder="Enter your full name" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Gold Weight (grams)</label>
-            <input type="number" className="form-control" placeholder="Enter gold weight" />
-          </div>
-        </>
-      ),
-      business: (
-        <>
-          <div className="mb-3">
-            <label className="form-label">Business Name</label>
-            <input type="text" className="form-control" placeholder="Enter business name" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Loan Amount</label>
-            <input type="number" className="form-control" placeholder="Enter loan amount" />
-          </div>
-        </>
-      ),
-      agriculture: (
-        <>
-          <div className="mb-3">
-            <label className="form-label">Farmer's Name</label>
-            <input type="text" className="form-control" placeholder="Enter farmer's name" />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Land Area (acres)</label>
-            <input type="number" className="form-control" placeholder="Enter land area" />
-          </div>
-        </>
-      ),
-    };
+  // const renderForm = () => {
+  //   const formFields = {
+  //     home: (
+  //       <>
+  //         <div className="mb-3">
+  //           <label className="form-label">Full Name</label>
+  //           <input type="text" className="form-control" placeholder="Enter your full name" />
+  //         </div>
+  //         <div className="mb-3">
+  //           <label className="form-label">Property Value</label>
+  //           <input type="number" className="form-control" placeholder="Enter property value" />
+  //         </div>
+  //       </>
+  //     ),
+  //     gold: (
+  //       <>
+  //         <div className="mb-3">
+  //           <label className="form-label">Full Name</label>
+  //           <input type="text" className="form-control" placeholder="Enter your full name" />
+  //         </div>
+  //         <div className="mb-3">
+  //           <label className="form-label">Gold Weight (grams)</label>
+  //           <input type="number" className="form-control" placeholder="Enter gold weight" />
+  //         </div>
+  //       </>
+  //     ),
+  //     business: (
+  //       <>
+  //         <div className="mb-3">
+  //           <label className="form-label">Business Name</label>
+  //           <input type="text" className="form-control" placeholder="Enter business name" />
+  //         </div>
+  //         <div className="mb-3">
+  //           <label className="form-label">Loan Amount</label>
+  //           <input type="number" className="form-control" placeholder="Enter loan amount" />
+  //         </div>
+  //       </>
+  //     ),
+  //     agriculture: (
+  //       <>
+  //         <div className="mb-3">
+  //           <label className="form-label">Farmer's Name</label>
+  //           <input type="text" className="form-control" placeholder="Enter farmer's name" />
+  //         </div>
+  //         <div className="mb-3">
+  //           <label className="form-label">Land Area (acres)</label>
+  //           <input type="number" className="form-control" placeholder="Enter land area" />
+  //         </div>
+  //       </>
+  //     ),
+  //   };
 
-    const colors = {
-      home: "primary",
-      gold: "warning",
-      business: "success",
-      agriculture: "info",
-    };
+  //   const colors = {
+  //     home: "primary",
+  //     gold: "warning",
+  //     business: "success",
+  //     agriculture: "info",
+  //   };
 
-    return (
-      <>
-        <h3 className={`fw-bold text-${colors[activeLoan]} mb-4`}>
-          {loanOptions.find((l) => l.id === activeLoan)?.title} Application
-        </h3>
-        <form>
-          {formFields[activeLoan]}
-          <div className="d-flex justify-content-between mt-4">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={() => setActiveLoan(null)}
-            >
-              <FaArrowLeft className="me-2" /> Back
-            </button>
-            <button type="submit" className={`btn btn-${colors[activeLoan]} px-4`}>
-              Submit Application
-            </button>
-          </div>
-        </form>
-      </>
-    );
-  };
+  //   return (
+  //     <>
+  //       <h3 className={`fw-bold text-${colors[activeLoan]} mb-4`}>
+  //         {loanOptions.find((l) => l.id === activeLoan)?.title} Application
+  //       </h3>
+  //       <form>
+  //         {formFields[activeLoan]}
+  //         <div className="d-flex justify-content-between mt-4">
+  //           <button
+  //             type="button"
+  //             className="btn btn-outline-secondary"
+  //             onClick={() => setActiveLoan(null)}
+  //           >
+  //             <FaArrowLeft className="me-2" /> Back
+  //           </button>
+  //           <button type="submit" className={`btn btn-${colors[activeLoan]} px-4`}>
+  //             Submit Application
+  //           </button>
+  //         </div>
+  //       </form>
+  //     </>
+  //   );
+  // };
 
   return (
     <div className="container my-5 py-5">
@@ -138,7 +138,8 @@ function Loan() {
                 <p className="text-muted">{loan.text}</p>
                 <button
                   className={`btn ${loan.btnClass} mt-auto px-4`}
-                  onClick={() => setActiveLoan(loan.id)}
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
                 >
                   Apply Now
                 </button>

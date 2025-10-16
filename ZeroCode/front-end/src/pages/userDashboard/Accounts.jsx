@@ -1,20 +1,35 @@
+// AccountDetails.jsx
+import React from "react";
 import Card from "react-bootstrap/Card";
-import { FaRegCreditCard, FaUniversity, FaCoins, FaMapMarkerAlt, FaCodeBranch, FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
+import Button from "react-bootstrap/Button";
+import { 
+  FaRegCreditCard, 
+  FaUniversity, 
+  FaCoins, 
+  FaMapMarkerAlt, 
+  FaCodeBranch, 
+  FaCalendarAlt, 
+  FaCheckCircle, 
+  FaDownload, 
+  FaEdit 
+} from "react-icons/fa";
 
-export default function Accounts() {
+export default function AccountDetails() {
   const accountDetails = [
-    { icon: <FaRegCreditCard />, label: "Account Number", value: "1234 5678 9012", bg: "bg-primary text-white" },
-    { icon: <FaUniversity />, label: "Account Type", value: "Savings Account", bg: "bg-success text-white" },
-    { icon: <FaCoins />, label: "Balance", value: "₹ 1,25,000.50", bg: "bg-warning text-dark" },
-    { icon: <FaMapMarkerAlt />, label: "Branch", value: "Kolkata Main Branch", bg: "bg-info text-white" },
-    { icon: <FaCodeBranch />, label: "IFSC Code", value: "BANK0001234", bg: "bg-secondary text-white" },
-    { icon: <FaCalendarAlt />, label: "Opening Date", value: "15th Jan 2020", bg: "bg-danger text-white" },
-    { icon: <FaCheckCircle />, label: "Status", value: "Active", bg: "bg-dark text-white" },
+    { icon: <FaRegCreditCard />, label: "Account Number", value: "1234 5678 9012" },
+    { icon: <FaUniversity />, label: "Account Type", value: "Savings Account" },
+    { icon: <FaCoins />, label: "Balance", value: "₹1,25,000.50" },
+    { icon: <FaMapMarkerAlt />, label: "Branch", value: "Kolkata Main Branch" },
+    { icon: <FaCodeBranch />, label: "IFSC Code", value: "BANK0001234" },
+    { icon: <FaCalendarAlt />, label: "Opening Date", value: "15th Jan 2020" },
+    { icon: <FaCheckCircle />, label: "Status", value: "Active" },
   ];
 
   return (
-    <div className="container mt-4">
-      <Card className="shadow rounded-4 p-3">
+    <div className="container mt-4 p-4">
+      
+      {/* Account Information Card */}
+      <Card className="shadow rounded-4 p-3 mb-4">
         <Card.Header className="bg-primary text-white rounded-top-4 d-flex align-items-center mb-3">
           <FaRegCreditCard className="me-2" />
           <h4 className="mb-0">Account Information</h4>
@@ -35,7 +50,46 @@ export default function Accounts() {
             </div>
           ))}
         </div>
+
+        {/* Action Buttons */}
+        <div className="mt-4 d-flex gap-3">
+          <Button variant="success" className="d-flex align-items-center gap-2">
+            <FaDownload /> Download Statement
+          </Button>
+          <Button variant="warning" className="d-flex align-items-center gap-2">
+            <FaEdit /> Update Info
+          </Button>
+        </div>
       </Card>
+
+      {/* Optional: Personal Information Update Form */}
+      <Card className="shadow rounded-4 p-3">
+        <Card.Header className="bg-info text-white rounded-top-4 d-flex align-items-center mb-3">
+          <h5 className="mb-0">Personal Information</h5>
+        </Card.Header>
+        <form className="row g-3">
+          <div className="col-md-6">
+            <label className="form-label">Full Name</label>
+            <input type="text" className="form-control" defaultValue="John Doe" />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">Email</label>
+            <input type="email" className="form-control" defaultValue="john.doe@example.com" />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">Phone</label>
+            <input type="text" className="form-control" defaultValue="+91 9876543210" />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label">Address</label>
+            <input type="text" className="form-control" defaultValue="123, Park Street, Kolkata" />
+          </div>
+          <div className="col-12">
+            <Button type="submit" variant="primary">Update Information</Button>
+          </div>
+        </form>
+      </Card>
+
     </div>
   );
 }

@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 py-4" style={{ backgroundColor: "whitesmoke", minHeight: "100vh", paddingBottom: "50px" }}>
       <h2 className="fw-bold mb-1">Administrator Dashboard</h2>
       <p className="text-muted mb-4">Monitor bank operations and manage users efficiently.</p>
 

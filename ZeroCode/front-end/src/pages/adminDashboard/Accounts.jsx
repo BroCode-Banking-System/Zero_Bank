@@ -10,7 +10,7 @@ export default function AdminAccounts() {
   ];
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 py-4" style={{ backgroundColor: "whitesmoke", minHeight: "100vh", paddingBottom: "50px" }}>
       <h3 className="mb-3 fw-bold">All Customer Accounts</h3>
       <div className="row g-3">
         {accounts.map(acc => (

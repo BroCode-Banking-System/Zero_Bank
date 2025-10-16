@@ -1,3 +1,4 @@
+// Front-end/src/pages/account.jsx
 import React, { useState } from "react";
 import { FaPiggyBank, FaBuilding, FaArrowLeft } from "react-icons/fa";
 
@@ -23,10 +24,12 @@ function OpenAccount() {
                 </p>
                 <button
                   className="btn btn-primary px-4 mt-3"
-                  onClick={() => setActiveForm("savings")}
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
                 >
                   Apply Now
                 </button>
+
               </div>
             </div>
           </div>
@@ -43,7 +46,8 @@ function OpenAccount() {
                 </p>
                 <button
                   className="btn btn-success px-4 mt-3"
-                  onClick={() => setActiveForm("current")}
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
                 >
                   Apply Now
                 </button>
@@ -54,7 +58,7 @@ function OpenAccount() {
       )}
 
       {/* --- Conditional Forms --- */}
-      {activeForm && (
+      {/* {activeForm && (
         <div className="row justify-content-center mt-5">
           <div className="col-md-8 col-lg-6">
             {activeForm === "savings" && (
@@ -122,7 +126,7 @@ function OpenAccount() {
             )}
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

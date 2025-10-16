@@ -22,7 +22,8 @@ function Insurance() {
                 </p>
                 <button
                   className="btn btn-primary px-4 mt-3"
-                  onClick={() => setActiveInsurance("health")}
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
                 >
                   Apply Now
                 </button>
@@ -41,7 +42,8 @@ function Insurance() {
                 </p>
                 <button
                   className="btn btn-warning px-4 mt-3"
-                  onClick={() => setActiveInsurance("general")}
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
                 >
                   Apply Now
                 </button>
@@ -60,7 +62,8 @@ function Insurance() {
                 </p>
                 <button
                   className="btn btn-success px-4 mt-3"
-                  onClick={() => setActiveInsurance("life")}
+                  data-bs-toggle="modal"
+                  data-bs-target="#loginModal"
                 >
                   Apply Now
                 </button>
@@ -71,7 +74,7 @@ function Insurance() {
       )}
 
       {/* --- Conditional Insurance Forms --- */}
-      <div className="mt-5 w-50" style={{ maxWidth: "600px", margin: "0 auto" }}>
+      {/* <div className="mt-5 w-50" style={{ maxWidth: "600px", margin: "0 auto" }}>
         {activeInsurance === "health" && (
           <div className="card p-4 shadow border-0">
             <h3 className="fw-bold text-primary mb-4">Health Insurance Application</h3>
@@ -167,7 +170,7 @@ function Insurance() {
             </form>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -46,7 +46,7 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <Link to="/dashboard/accounts" className="nav-link d-flex align-items-center gap-2">
+            <Link to="/employeeDashboard/accounts" className="nav-link d-flex align-items-center gap-2">
               <FaWallet /> Accounts
             </Link>
           </li>
@@ -66,17 +66,17 @@ export default function Sidebar() {
             <div className="collapse" id="transactionsSubMenu">
               <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4">
                 <li>
-                  <Link to="/dashboard/fund-transfer" className="nav-link">
+                  <Link to="/employeeDashboard/fund-transfer" className="nav-link">
                     Fund Transfer
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/deposit-history" className="nav-link">
+                  <Link to="/employeeDashboard/deposit-history" className="nav-link">
                     Deposit History
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/withdrawal-history" className="nav-link">
+                  <Link to="/employeeDashboard/withdrawal-history" className="nav-link">
                     Withdrawal History
                   </Link>
                 </li>
@@ -85,7 +85,7 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <Link to="/dashboard/profile" className="nav-link d-flex align-items-center gap-2">
+            <Link to="/employeeDashboard/profile" className="nav-link d-flex align-items-center gap-2">
               <FaUser /> Profile
             </Link>
           </li>

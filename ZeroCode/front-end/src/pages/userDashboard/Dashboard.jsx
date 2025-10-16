@@ -1,6 +1,16 @@
-import { FaUniversity, FaWallet, FaCreditCard, FaPiggyBank, FaExchangeAlt, FaFileInvoice, FaUserFriends } from "react-icons/fa";
+// UserDashboard.jsx
+import React from "react";
+import { 
+  FaUniversity, 
+  FaWallet, 
+  FaCreditCard, 
+  FaPiggyBank, 
+  FaExchangeAlt, 
+  FaFileInvoice, 
+  FaUserFriends 
+} from "react-icons/fa";
 
-export default function Dashboard() {
+export default function UserDashboard() {
   const accounts = [
     { id: "savings", title: "Savings Account", balance: "₹3,25,000", accountNumber: "****1234", lastTransaction: "+₹15,000", icon: <FaWallet className="text-indigo-500 fs-3" /> },
     { id: "current", title: "Current Account", balance: "₹1,75,000", accountNumber: "****5678", lastTransaction: "-₹2,500", icon: <FaUniversity className="text-success fs-3" /> },
@@ -16,8 +26,9 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="container mt-4">
-      {/* Welcome */}
+    <div className="container mt-4 py-4">
+
+      {/* Welcome Section */}
       <h2 className="fw-bold mb-1">Welcome back, Customer!</h2>
       <p className="text-muted mb-4">Here’s your account overview at a glance.</p>
 
@@ -25,21 +36,21 @@ export default function Dashboard() {
       <div className="row g-3 mb-4">
         <div className="col-md-4">
           <div className="card text-center shadow-sm rounded-4 bg-primary text-white p-3">
-            <h5 className="mb-1">Total Balance</h5>
+            <h5>Total Balance</h5>
             <p className="fs-4 fw-bold">₹5,42,000</p>
             <small>Updated just now</small>
           </div>
         </div>
         <div className="col-md-4">
           <div className="card text-center shadow-sm rounded-4 bg-success text-white p-3">
-            <h5 className="mb-1">Monthly Spending</h5>
+            <h5>Monthly Spending</h5>
             <p className="fs-4 fw-bold">₹1,25,000</p>
             <small>Updated just now</small>
           </div>
         </div>
         <div className="col-md-4">
           <div className="card text-center shadow-sm rounded-4 bg-warning text-dark p-3">
-            <h5 className="mb-1">Investments</h5>
+            <h5>Investments</h5>
             <p className="fs-4 fw-bold">₹2,00,000</p>
             <small>Updated just now</small>
           </div>
@@ -104,6 +115,7 @@ export default function Dashboard() {
           </tbody>
         </table>
       </div>
+
     </div>
   );
 }

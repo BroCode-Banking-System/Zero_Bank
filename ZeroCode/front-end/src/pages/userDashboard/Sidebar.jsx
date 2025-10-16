@@ -40,13 +40,13 @@ export default function Sidebar() {
       <div className="p-3 flex-grow-1">
         <ul className="nav nav-pills flex-column mb-auto">
           <li className="nav-item">
-            <Link to="/dashboard" className="nav-link d-flex align-items-center gap-2">
+            <Link to="/userDashboard" className="nav-link d-flex align-items-center gap-2">
               <FaTachometerAlt /> Dashboard
             </Link>
           </li>
 
           <li>
-            <Link to="/dashboard/accounts" className="nav-link d-flex align-items-center gap-2">
+            <Link to="/userDashboard/accounts" className="nav-link d-flex align-items-center gap-2">
               <FaWallet /> Accounts
             </Link>
           </li>
@@ -66,17 +66,17 @@ export default function Sidebar() {
             <div className="collapse" id="transactionsSubMenu">
               <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4">
                 <li>
-                  <Link to="/dashboard/fund-transfer" className="nav-link">
+                  <Link to="/userDashboard/fund-transfer" className="nav-link">
                     Fund Transfer
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/deposit-history" className="nav-link">
+                  <Link to="/userDashboard/deposit-history" className="nav-link">
                     Deposit History
                   </Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/withdrawal-history" className="nav-link">
+                  <Link to="/userDashboard/withdrawal-history" className="nav-link">
                     Withdrawal History
                   </Link>
                 </li>
@@ -85,7 +85,7 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <Link to="/dashboard/profile" className="nav-link d-flex align-items-center gap-2">
+            <Link to="/userDashboard/profile" className="nav-link d-flex align-items-center gap-2">
               <FaUser /> Profile
             </Link>
           </li>

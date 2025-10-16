@@ -1,7 +1,9 @@
+// Front-end/src/component/loginmodal.jsx
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+//import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 const LoginModal = () => {
   const [activeTab, setActiveTab] = useState("user");
@@ -44,7 +46,6 @@ const LoginModal = () => {
           role: "employee",
         };
       } else {
-        // user login
         payload = {
           username: formData.user.userId,
           password: formData.user.password,
@@ -61,9 +62,9 @@ const LoginModal = () => {
       const userRole = response.data.user.role;
 
       // Redirect based on role
-      if (userRole === "admin") navigate("/adminDashboard");
-      else if (userRole === "employee") navigate("/employeeDashboard");
-      else if (userRole === "user") navigate("/userDashboard");
+      if (userRole === "admin") navigate("/adminDashboard", { replace: true });
+      else if (userRole === "employee") navigate("/employeeDashboard", { replace: true });
+      else if (userRole === "user") navigate("/userDashboard", { replace: true });
       else navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Try again.");

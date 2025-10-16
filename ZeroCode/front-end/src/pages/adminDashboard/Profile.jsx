@@ -1,7 +1,8 @@
 // profile.jsx
 import { FaUser, FaEnvelope, FaPhone, FaBirthdayCake, FaVenusMars, FaIdCard, FaAddressCard } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import image from "../../assets/img/profile.png";
+// import image from "../../assets/img/profile.png";
+import image from "../../assets/img/director1.jpg";
 
 export default function Profile() {
   const profileDetails = [
@@ -16,7 +17,7 @@ export default function Profile() {
   ];
 
   return (
-    <div className="container mt-5" style={{ backgroundColor: "whitesmoke", minHeight: "100vh", paddingBottom: "50px" }}>
+    <div className="container mt-5 py-5" style={{ backgroundColor: "whitesmoke", minHeight: "100vh", paddingBottom: "50px" }}>
       <div className="card shadow-lg p-4 position-relative" style={{ backgroundColor: "#f5f5f5" }}>
         {/* Profile Image */}
         <img
@@ -52,7 +53,7 @@ export default function Profile() {
 
         <div className="text-center mt-4">
           <Link to="/adminDashboard/settings" className="btn btn-primary px-4">
-            Change Password
+            Change Settings
           </Link>
         </div>
       </div>
