@@ -12,12 +12,10 @@ import {
 export default function Sidebar() {
   const navigate = useNavigate();
 
-  // Handle logout with confirmation
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
     if (confirmed) {
-      // Optional: clear auth/token here
-      navigate("/"); // Redirect to home page after logout
+      navigate("/");
     }
   };
 
@@ -47,10 +45,43 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <Link to="/adminDashboard/accounts" className="nav-link d-flex align-items-center gap-2">
-              <FaWallet /> Accounts
-            </Link>
+            <a
+              className="nav-link dropdown-toggle d-flex align-items-center gap-2"
+              data-bs-toggle="collapse"
+              href="#accountsSubMenu"
+              role="button"
+              aria-expanded="false"
+              aria-controls="accountsSubMenu"
+            >
+              <FaUser /> Accounts
+            </a>
+
+            <div className="collapse" id="accountsSubMenu">
+              <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4">
+                <li>
+                  <Link to="/adminDashboard/accounts/PendingAccounts" className="nav-link">
+                    Pending Accounts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/adminDashboard/accounts/OpenAccounts" className="nav-link">
+                    Open Accounts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/adminDashboard/accounts/ClosedAccounts" className="nav-link">
+                    Closed Accounts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/adminDashboard/accounts/ViewAccounts" className="nav-link">
+                    View Accounts
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </li>
+
 
           {/* Transactions with sub-menu */}
           <li>
@@ -66,11 +97,11 @@ export default function Sidebar() {
             </a>
             <div className="collapse" id="transactionsSubMenu">
               <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4">
-                <li>
+                {/* <li>
                   <Link to="/adminDashboard/fund-transfer" className="nav-link">
                     Fund Transfer
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link to="/adminDashboard/deposit-history" className="nav-link">
                     Deposit History
@@ -83,6 +114,12 @@ export default function Sidebar() {
                 </li>
               </ul>
             </div>
+          </li>
+
+           <li>
+            <Link to="/adminDashboard/employeeManagement" className="nav-link d-flex align-items-center gap-2">
+              <FaUser /> Employees
+            </Link>
           </li>
 
           <li>

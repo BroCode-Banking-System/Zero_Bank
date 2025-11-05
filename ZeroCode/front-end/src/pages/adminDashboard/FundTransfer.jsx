@@ -1,12 +1,32 @@
-import { FaUser, FaWallet, FaRupeeSign, FaBuilding } from "react-icons/fa";
+// front-end/src/pages/adminDashboard/FundTransfer.jsx
+import { useState } from "react";
+import axios from "axios";
+import { FaWallet, FaRupeeSign } from "react-icons/fa";
 import Card from "react-bootstrap/Card";
 
 export default function AdminFundTransfer() {
-  const accounts = [
-    { id: 1, name: "John Doe", accountNumber: "1234 5678 9012" },
-    { id: 2, name: "Jane Smith", accountNumber: "9876 5432 1012" },
-    { id: 3, name: "Robert Lee", accountNumber: "1122 3344 5566" },
-  ];
+  const [formData, setFormData] = useState({
+    userId: "", // optional for admin — depends on your logic
+    accountId: "",
+    amount: "",
+    description: "",
+    transactionType: "transfer",
+    transferType: "internal",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:8000/api/transactions", formData);
+      alert(res.data.message);
+    } catch (err) {
+      alert("Error creating transaction");
+    }
+  };
 
   return (
     <div className="container mt-4">
@@ -16,53 +36,37 @@ export default function AdminFundTransfer() {
           <h4 className="mb-0">Administrator Fund Transfer</h4>
         </Card.Header>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="row g-3">
-            {/* Source Account */}
-            <div className="col-md-6">
-              <label className="form-label small">Source Account</label>
-              <select className="form-select">
-                <option value="">Select source account</option>
-                {accounts.map(acc => (
-                  <option key={acc.id} value={acc.accountNumber}>
-                    {acc.name} - {acc.accountNumber}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Destination Account */}
-            <div className="col-md-6">
-              <label className="form-label small">Destination Account</label>
-              <select className="form-select">
-                <option value="">Select destination account</option>
-                {accounts.map(acc => (
-                  <option key={acc.id} value={acc.accountNumber}>
-                    {acc.name} - {acc.accountNumber}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Amount */}
             <div className="col-md-6">
               <label className="form-label small">Amount</label>
               <div className="input-group">
                 <span className="input-group-text"><FaRupeeSign /></span>
-                <input type="number" className="form-control" placeholder="Enter amount" />
+                <input
+                  type="number"
+                  className="form-control"
+                  name="amount"
+                  placeholder="Enter amount"
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
 
-            {/* Description */}
             <div className="col-md-6">
               <label className="form-label small">Description</label>
-              <input type="text" className="form-control" placeholder="Optional description" />
+              <input
+                type="text"
+                className="form-control"
+                name="description"
+                placeholder="Optional description"
+                onChange={handleChange}
+              />
             </div>
 
-            {/* Transfer Type (Optional) */}
             <div className="col-md-6">
               <label className="form-label small">Transfer Type</label>
-              <select className="form-select">
+              <select name="transferType" className="form-select" onChange={handleChange}>
                 <option value="internal">Internal Transfer</option>
                 <option value="adjustment">Adjustment</option>
               </select>

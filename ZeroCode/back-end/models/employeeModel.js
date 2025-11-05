@@ -1,6 +1,7 @@
+//back-end/models/employeeModel.js
 const mongoose = require("mongoose");
 
-const adminSchema = new mongoose.Schema(
+const employeeSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
@@ -10,4 +11,4 @@ const adminSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Employee", adminSchema, "employees");
+module.exports = mongoose.model("Employee", employeeSchema, "employees");

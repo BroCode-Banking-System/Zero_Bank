@@ -1,35 +1,132 @@
-// adminSettings.jsx
-export default function AdminSettings() {
+import { useState } from "react";
+import axios from "axios";
+import { Alert, Spinner } from "react-bootstrap";
+
+export default function AdminChangePassword() {
+  const [formData, setFormData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({ type: "", message: "" });
+
+  const adminId = localStorage.getItem("adminId"); // ✅ must be stored after login
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { oldPassword, newPassword, confirmPassword } = formData;
+
+    // 🔹 Basic validation
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      return setAlert({
+        type: "danger",
+        message: "Please fill in all fields.",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return setAlert({
+        type: "danger",
+        message: "Passwords do not match.",
+      });
+    }
+
+    try {
+      setLoading(true);
+      setAlert({ type: "", message: "" });
+
+      const res = await axios.put(
+        `http://localhost:8000/api/admin/change-password/${adminId}`,
+        { oldPassword, newPassword }
+      );
+
+      setAlert({ type: "success", message: res.data.message });
+      setFormData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message || "Error changing password.";
+      setAlert({ type: "danger", message: errorMsg });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="container mt-4">
-      <h3 className="mb-4 fw-bold">Administrator Settings</h3>
-      
-      <form>
-        <div className="mb-3">
-          <label className="form-label">Change Password</label>
-          <input type="password" className="form-control" placeholder="New Password" />
-        </div>
+    <div className="container mt-5" style={{ maxWidth: "500px" }}>
+      <div className="card shadow-lg border-0 rounded-4">
+        <div className="card-body p-4">
+          <h4 className="fw-bold mb-4 text-center">Change Admin Password</h4>
 
-        <div className="mb-3">
-          <label className="form-label">Role & Permissions</label>
-          <select className="form-select">
-            <option value="full">Full Access</option>
-            <option value="limited">Limited Access</option>
-            <option value="audit">Audit Only</option>
-          </select>
-        </div>
+          {alert.message && (
+            <Alert
+              variant={alert.type}
+              onClose={() => setAlert({ type: "", message: "" })}
+              dismissible
+            >
+              {alert.message}
+            </Alert>
+          )}
 
-        <div className="mb-3">
-          <label className="form-label">Branch Assignment</label>
-          <select className="form-select">
-            <option>Kolkata HQ</option>
-            <option>Delhi Branch</option>
-            <option>Mumbai Branch</option>
-          </select>
-        </div>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Old Password</label>
+              <input
+                type="password"
+                className="form-control"
+                name="oldPassword"
+                placeholder="Enter old password"
+                value={formData.oldPassword}
+                onChange={handleChange}
+              />
+            </div>
 
-        <button type="submit" className="btn btn-primary">Save Changes</button>
-      </form>
+            <div className="mb-3">
+              <label className="form-label">New Password</label>
+              <input
+                type="password"
+                className="form-control"
+                name="newPassword"
+                placeholder="Enter new password"
+                value={formData.newPassword}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Confirm New Password</label>
+              <input
+                type="password"
+                className="form-control"
+                name="confirmPassword"
+                placeholder="Confirm new password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner animation="border" size="sm" /> Updating...
+                </>
+              ) : (
+                "Change Password"
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

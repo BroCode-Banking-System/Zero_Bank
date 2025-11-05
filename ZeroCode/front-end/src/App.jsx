@@ -17,12 +17,18 @@ import Footer from "./component/footer";
 import DashFooterA from "./pages/adminDashboard/Footer";
 import AdminDashboard from "./pages/adminDashboard/Dashboard";
 import AdminSidebar from "./pages/adminDashboard/Sidebar";
-import AdminAccounts from "./pages/adminDashboard/Accounts";
+//import AdminAccounts from "./pages/adminDashboard/Accounts";
+import PendingAccounts from "./pages/adminDashboard/PendingAccounts";
+import OpenAccounts from "./pages/adminDashboard/OpenAccounts";
+import ClosedAccounts from "./pages/adminDashboard/ClosedAccounts";
+import ViewAccounts from "./pages/adminDashboard/ViewAccounts";
 import AdminFundTransfer from "./pages/adminDashboard/FundTransfer";
 import AdminDepositHistory from "./pages/adminDashboard/DepositHistory";
 import AdminWithdrawalHistory from "./pages/adminDashboard/WithdrawalHistory";
 import AdminSettings from "./pages/adminDashboard/Settings";
 import AdminProfile from "./pages/adminDashboard/Profile";
+import ManageUsers from "./pages/adminDashboard/ManageUsers";
+import EmployeeManagement from "./pages/adminDashboard/EmployeeManagement";
 
 // Employee Dashboard
 import DashFooterE from "./pages/employeeDashboard/Footer";
@@ -100,12 +106,18 @@ function AdminDashboardWrapper() {
       <div className="flex-grow-1">
         <Routes>
           <Route path="" element={<AdminDashboard />} />
-          <Route path="accounts" element={<AdminAccounts />} />
+          {/* <Route path="accounts" element={<AdminAccounts />} /> */}
+          <Route path="accounts/pendingAccounts" element={<PendingAccounts />} />
+          <Route path="accounts/openAccounts" element={<OpenAccounts />} />
+          <Route path="accounts/closedAccounts" element={<ClosedAccounts />} />
+          <Route path="accounts/viewAccounts" element={<ViewAccounts />} />
           <Route path="fund-transfer" element={<AdminFundTransfer />} />
           <Route path="deposit-history" element={<AdminDepositHistory />} />
           <Route path="withdrawal-history" element={<AdminWithdrawalHistory />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="profile" element={<AdminProfile />} />
+          <Route path="ManageUsers" element={<ManageUsers />} />
+          <Route path="EmployeeManagement" element={<EmployeeManagement />} />
         </Routes>
         <DashFooterA />
       </div>

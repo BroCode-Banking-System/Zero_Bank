@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-//import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 const LoginModal = () => {
   const [activeTab, setActiveTab] = useState("user");
@@ -59,6 +58,11 @@ const LoginModal = () => {
       );
 
       console.log("Login Success:", response.data);
+
+      if (response.data.user && response.data.user.role === "admin") {
+        localStorage.setItem("adminId", response.data.user.id);
+      }
+
       const userRole = response.data.user.role;
 
       // Redirect based on role
@@ -119,9 +123,8 @@ const LoginModal = () => {
               {Object.keys(tabConfig).map((role) => (
                 <li className="nav-item" key={role}>
                   <button
-                    className={`nav-link px-4 ${
-                      activeTab === role ? "active fw-semibold" : ""
-                    }`}
+                    className={`nav-link px-4 ${activeTab === role ? "active fw-semibold" : ""
+                      }`}
                     onClick={() => setActiveTab(role)}
                     disabled={loading}
                   >

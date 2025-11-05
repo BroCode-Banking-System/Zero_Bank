@@ -6,14 +6,14 @@ import image from "../../assets/img/director1.jpg";
 
 export default function Profile() {
   const profileDetails = [
-    { icon: <FaUser />, label: "Name", value: "John Doe", bg: "bg-light" },
-    { icon: <FaEnvelope />, label: "Email", value: "john@example.com", bg: "bg-light" },
-    { icon: <FaPhone />, label: "Phone", value: "+91 9876543210", bg: "bg-light" },
-    { icon: <FaBirthdayCake />, label: "DOB", value: "01 Jan 1990", bg: "bg-light" },
+    { icon: <FaUser />, label: "Name", value: "Bikash Bhanja", bg: "bg-light" },
+    { icon: <FaEnvelope />, label: "Email", value: "bikash321@gmail.com", bg: "bg-light" },
+    { icon: <FaPhone />, label: "Phone", value: "+91 9923346727", bg: "bg-light" },
+    { icon: <FaBirthdayCake />, label: "DOB", value: "17 June 2003", bg: "bg-light" },
     { icon: <FaVenusMars />, label: "Gender", value: "Male", bg: "bg-light" },
     { icon: <FaIdCard />, label: "Aadhaar", value: "3376 5432 1045", bg: "bg-light" },
     { icon: <FaIdCard />, label: "PAN", value: "ABCD1234E", bg: "bg-light" },
-    { icon: <FaAddressCard />, label: "Address", value: "Kolkata, India", bg: "bg-light" },
+    { icon: <FaAddressCard />, label: "Address", value: "Tamluk, India", bg: "bg-light" },
   ];
 
   return (

@@ -1,3 +1,4 @@
+// back-end/controllers/authController.js
 const bcrypt = require("bcryptjs");
 const AdminUser = require("../models/adminModel");
 const Employee = require("../models/employeeModel");
