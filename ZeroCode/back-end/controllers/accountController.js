@@ -1,5 +1,22 @@
 // controllers/accountController.js
 const Account = require("../models/accountModel");
+const User = require("../models/userModel");
+const bcrypt = require("bcryptjs");
+
+/**
+ * Utility: Generate a unique 12-digit account number
+ */
+const generateAccountNumber = async () => {
+  let accNo;
+  let exists = true;
+
+  while (exists) {
+    accNo = Math.floor(100000000000 + Math.random() * 900000000000).toString(); // 12 digits
+    exists = await Account.findOne({ accNo });
+  }
+
+  return accNo;
+};
 
 /**
  * @desc Create a new account (with documents)
@@ -16,13 +33,20 @@ const createAccount = async (req, res) => {
       accountType,
       state,
       city,
-      branch,
+      password,
       language,
       consent,
     } = req.body;
 
     const aadhaardoc = req.files?.aadhaardoc?.[0]?.filename || null;
     const pandoc = req.files?.pandoc?.[0]?.filename || null;
+    const signature = req.files?.signature?.[0]?.filename || null;
+    const photo = req.files?.photo?.[0]?.filename || null;
+
+    // Generate unique accNo and password
+    const accNo = await generateAccountNumber();
+    //const password = generatePassword();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newAccount = new Account({
       fullName,
@@ -35,14 +59,22 @@ const createAccount = async (req, res) => {
       accountType,
       state,
       city,
-      branch,
+      signature,
+      photo,
       language,
       consent: consent === "true",
       status: "pending",
+      accNo,
+      password: hashedPassword,
     });
 
     await newAccount.save();
-    res.status(201).json({ message: "Account created successfully" });
+
+    res.status(201).json({
+      message: "Account created successfully",
+      accNo,
+      password, // optionally return these for admin or confirmation
+    });
   } catch (err) {
     console.error("Account creation failed:", err);
     res.status(500).json({ message: "Server error creating account" });
@@ -63,7 +95,6 @@ const getAllAccounts = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch accounts" });
   }
 };
-
 
 /**
  * @desc Get pending accounts
@@ -97,6 +128,7 @@ const approveAccount = async (req, res) => {
     res.status(500).json({ message: "Failed to approve account" });
   }
 };
+
 
 /**
  * @desc Freeze (reject) an account

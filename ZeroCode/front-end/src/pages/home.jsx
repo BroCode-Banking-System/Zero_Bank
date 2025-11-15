@@ -113,28 +113,28 @@ function SlideWorks() {
 
 function NoticeBar({ inline = false }) {
   const notices = [
-    { 
-      date: "27 August 2025", 
+    {
+      date: "27 August 2025",
       text: "Highlight new digital services like mobile apps or UPI integration.",
       pdf: "/pdfs/abc.pdf"
     },
-    { 
-      date: "09 June 2025", 
+    {
+      date: "09 June 2025",
       text: "Display latest interest rates, loan offers, and deposit schemes.",
       pdf: "/pdfs/Interest-Rates-Notice.pdf"
     },
-    { 
-      date: "12 June 2025", 
+    {
+      date: "12 June 2025",
       text: "Announce important regulatory updates and compliance guidelines.",
       pdf: "/pdfs/Regulatory-Updates.pdf"
     },
-    { 
-      date: "03 June 2025", 
+    {
+      date: "03 June 2025",
       text: "Share holiday schedules and working hours of branches.",
       pdf: "/pdfs/Holiday-Schedule.pdf"
     },
-    { 
-      date: "06 June 2025", 
+    {
+      date: "06 June 2025",
       text: "Provide customer awareness messages on fraud prevention and security.",
       pdf: "/pdfs/Fraud-Prevention.pdf"
     },
@@ -193,7 +193,7 @@ function NoticeBar({ inline = false }) {
                     height: "100px",
                     cursor: "pointer",
                   }}
-                  onClick={() => window.open(notice.pdf, "_blank")} 
+                  onClick={() => window.open(notice.pdf, "_blank")}
                 >
                   <div className="d-flex align-items-center">
                     <span className="fw-bold me-2">{notice.date}</span>
@@ -250,9 +250,12 @@ function BankForm({ inline = false }) {
     accountType: "",
     state: "",
     city: "",
-    branch: "",
+    signature: "",
+    photo: "",
     language: "",
     consent: false,
+    password: "",
+    confirmPassword: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -281,12 +284,15 @@ function BankForm({ inline = false }) {
       fd.append("accountType", formData.accountType);
       fd.append("state", formData.state);
       fd.append("city", formData.city);
-      fd.append("branch", formData.branch);
+      if (formData.signature) fd.append("signature", formData.signature);
+      if (formData.photo) fd.append("photo", formData.photo);
       fd.append("language", formData.language);
       fd.append("consent", formData.consent ? "true" : "false");
       // Append files if present
       if (formData.aadhaardoc) fd.append("aadhaardoc", formData.aadhaardoc);
       if (formData.pandoc) fd.append("pandoc", formData.pandoc);
+      fd.append("password", formData.password);
+      fd.append("confirmPassword", formData.confirmPassword);
 
       const res = await axios.post("http://localhost:8000/api/accounts", fd, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -304,9 +310,12 @@ function BankForm({ inline = false }) {
         accountType: "",
         state: "",
         city: "",
-        branch: "",
+        signature: "",
+        photo: "",
         language: "",
         consent: false,
+        password: "",
+        confirmPassword: "",
       });
     } catch (err) {
       const errMsg = err?.response?.data?.message || err.message || "Failed to submit.";
@@ -373,6 +382,8 @@ function BankForm({ inline = false }) {
               onChange={handleChange}
               placeholder="Aadhaar Number"
               required
+              pattern="^[0-9]{12}$"
+              title="Enter valid Aadhaar number (e.g. 123456789012)"
             />
           </div>
 
@@ -394,11 +405,17 @@ function BankForm({ inline = false }) {
               className="form-control"
               name="pan"
               value={formData.pan}
-              onChange={handleChange}
-              placeholder="PAN Number"
+              onChange={(e) => {
+                const value = e.target.value.toUpperCase(); // auto convert to uppercase
+                setFormData({ ...formData, pan: value });
+              }}
+              placeholder="ABCDE1234F"
               required
+              pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
+              title="Enter valid PAN number (e.g. ABCDE1234F)"
             />
           </div>
+
 
           <div className="col-md-6">
             <label className="form-label">PAN Document *</label>
@@ -481,19 +498,25 @@ function BankForm({ inline = false }) {
           </div>
 
           <div className="col-md-6">
-            <label className="form-label">Branch *</label>
-            <select
-              className="form-select"
-              name="branch"
-              value={formData.branch}
+            <label className="form-label">Signature *</label>
+            <input
+              type="file"
+              className="form-control"
+              name="signature"
               onChange={handleChange}
               required
-            >
-              <option value="">--Branch--</option>
-              <option>Main Branch</option>
-              <option>City Branch</option>
-              <option>Town Branch</option>
-            </select>
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Photo *</label>
+            <input
+              type="file"
+              className="form-control"
+              name="photo"
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="col-md-6">
@@ -511,6 +534,32 @@ function BankForm({ inline = false }) {
               <option>Bengali</option>
               <option>Other</option>
             </select>
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Password *</label>
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Confirm Password *</label>
+            <input
+              type="password"
+              className="form-control"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Password"
+              required
+            />
           </div>
 
           <div className="col-12">

@@ -1,21 +1,89 @@
-// UserDashboard.jsx
-import React from "react";
-import { 
-  FaUniversity, 
-  FaWallet, 
-  FaCreditCard, 
-  FaPiggyBank, 
-  FaExchangeAlt, 
-  FaFileInvoice, 
-  FaUserFriends 
+import React, { useEffect, useState } from "react";
+import {
+  FaUniversity,
+  FaWallet,
+  FaCreditCard,
+  FaPiggyBank,
+  FaExchangeAlt,
+  FaFileInvoice,
+  FaUserFriends,
 } from "react-icons/fa";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ make sure to import this
 
 export default function UserDashboard() {
+  const navigate = useNavigate();
+  
+  const [userData, setUserData] = useState({
+    totalBalance: 0,
+    monthlySpending: 0,
+    todayTransactions: 0,
+  });
+
+  // ✅ Get user info from localStorage
+  const userId = localStorage.getItem("userId");
+  const username = localStorage.getItem("username");
+  const role = localStorage.getItem("role"); // ✅ ADD THIS LINE
+
+  useEffect(() => {
+    console.log("User ID:", userId);
+
+    // ✅ Role check now works
+    if (!role || role !== "user") {
+      alert("Access denied. Please log in as User.");
+      navigate("/");
+      return;
+    }
+
+    if (userId) {
+      axios
+        .get(`http://localhost:8000/api/users/dashboard/${userId}`)
+        .then((res) => {
+          console.log("Fetched data:", res.data);
+          setUserData({
+            totalBalance: res.data.totalBalance || 0,
+            monthlySpending: res.data.monthlySpending || 0,
+            todayTransactions: res.data.todayTransactions || 0,
+          });
+        })
+        .catch((err) => console.error("Error fetching user data:", err));
+    }
+  }, [userId, role, navigate]);
+
+
   const accounts = [
-    { id: "savings", title: "Savings Account", balance: "₹3,25,000", accountNumber: "****1234", lastTransaction: "+₹15,000", icon: <FaWallet className="text-indigo-500 fs-3" /> },
-    { id: "current", title: "Current Account", balance: "₹1,75,000", accountNumber: "****5678", lastTransaction: "-₹2,500", icon: <FaUniversity className="text-success fs-3" /> },
-    { id: "credit", title: "Credit Card", balance: "Used: ₹25,000 / ₹1,00,000", accountNumber: "****7890", lastTransaction: "Due: 25 Sep", icon: <FaCreditCard className="text-danger fs-3" /> },
-    { id: "fd", title: "Fixed Deposit", balance: "₹50,000 @ 7%", accountNumber: "Maturity: 12 Dec", lastTransaction: "Interest: ₹3,500", icon: <FaPiggyBank className="text-warning fs-3" /> },
+    {
+      id: "savings",
+      title: "Savings Account",
+      balance: "₹3,25,000",
+      accountNumber: "****1234",
+      lastTransaction: "+₹15,000",
+      icon: <FaWallet className="text-indigo-500 fs-3" />,
+    },
+    {
+      id: "current",
+      title: "Current Account",
+      balance: "₹1,75,000",
+      accountNumber: "****5678",
+      lastTransaction: "-₹2,500",
+      icon: <FaUniversity className="text-success fs-3" />,
+    },
+    {
+      id: "credit",
+      title: "Credit Card",
+      balance: "Used: ₹25,000 / ₹1,00,000",
+      accountNumber: "****7890",
+      lastTransaction: "Due: 25 Sep",
+      icon: <FaCreditCard className="text-danger fs-3" />,
+    },
+    {
+      id: "fd",
+      title: "Fixed Deposit",
+      balance: "₹50,000 @ 7%",
+      accountNumber: "Maturity: 12 Dec",
+      lastTransaction: "Interest: ₹3,500",
+      icon: <FaPiggyBank className="text-warning fs-3" />,
+    },
   ];
 
   const transactions = [
@@ -27,31 +95,44 @@ export default function UserDashboard() {
 
   return (
     <div className="container mt-4 py-4">
-
-      {/* Welcome Section */}
-      <h2 className="fw-bold mb-1">Welcome back, Customer!</h2>
-      <p className="text-muted mb-4">Here’s your account overview at a glance.</p>
+      {/* Header Section */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 className="fw-bold mb-1">
+            Welcome back, {username}!
+          </h2>
+          <p className="text-muted mb-0">
+            Here’s your account overview at a glance.
+          </p>
+        </div>
+      </div>
 
       {/* Summary Cards */}
       <div className="row g-3 mb-4">
         <div className="col-md-4">
           <div className="card text-center shadow-sm rounded-4 bg-primary text-white p-3">
             <h5>Total Balance</h5>
-            <p className="fs-4 fw-bold">₹5,42,000</p>
+            <p className="fs-4 fw-bold">
+              ₹{(userData.totalBalance || 0).toLocaleString()}
+            </p>
             <small>Updated just now</small>
           </div>
         </div>
         <div className="col-md-4">
           <div className="card text-center shadow-sm rounded-4 bg-success text-white p-3">
             <h5>Monthly Spending</h5>
-            <p className="fs-4 fw-bold">₹1,25,000</p>
+            <p className="fs-4 fw-bold">
+              ₹{(userData.monthlySpending || 0).toLocaleString()}
+            </p>
             <small>Updated just now</small>
           </div>
         </div>
         <div className="col-md-4">
           <div className="card text-center shadow-sm rounded-4 bg-warning text-dark p-3">
-            <h5>Investments</h5>
-            <p className="fs-4 fw-bold">₹2,00,000</p>
+            <h5>Today Transactions</h5>
+            <p className="fs-4 fw-bold">
+              ₹{(userData.todayTransactions || 0).toLocaleString()}
+            </p>
             <small>Updated just now</small>
           </div>
         </div>
@@ -60,7 +141,7 @@ export default function UserDashboard() {
       {/* Account Overview */}
       <h3 className="fw-bold mb-3">Account Overview</h3>
       <div className="row g-3 mb-4">
-        {accounts.map(acc => (
+        {accounts.map((acc) => (
           <div key={acc.id} className="col-md-3">
             <div className="card text-center shadow-sm rounded-4 p-3">
               <div className="mb-2">{acc.icon}</div>
@@ -105,17 +186,22 @@ export default function UserDashboard() {
             </tr>
           </thead>
           <tbody>
-            {transactions.map(tx => (
+            {transactions.map((tx) => (
               <tr key={tx.id}>
                 <td>{tx.date}</td>
                 <td>{tx.desc}</td>
-                <td className={tx.type === "credit" ? "text-success" : "text-danger"}>{tx.amount}</td>
+                <td
+                  className={
+                    tx.type === "credit" ? "text-success" : "text-danger"
+                  }
+                >
+                  {tx.amount}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

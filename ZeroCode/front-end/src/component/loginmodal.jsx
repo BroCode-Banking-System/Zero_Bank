@@ -1,4 +1,3 @@
-// Front-end/src/component/loginmodal.jsx
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
@@ -59,19 +58,33 @@ const LoginModal = () => {
 
       console.log("Login Success:", response.data);
 
-      if (response.data.user && response.data.user.role === "admin") {
-        localStorage.setItem("adminId", response.data.user.id);
+      // ✅ Store common user data in localStorage
+      if (response.data && response.data.user) {
+        const { _id, id, username, role: userRole } = response.data.user;
+
+        // Some backends return _id, some return id
+        const userId = _id || id;
+
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("username", username);
+        localStorage.setItem("role", userRole);
+
+        console.log("Saved userId:", localStorage.getItem("userId"));
+        console.log("Saved username:", localStorage.getItem("username"));
+        console.log("Saved role:", localStorage.getItem("role"));
+
+        // ✅ Redirect based on role
+        if (userRole === "admin") navigate("/adminDashboard", { replace: true });
+        else if (userRole === "employee") navigate("/employeeDashboard", { replace: true });
+        else if (userRole === "user") navigate("/userDashboard", { replace: true });
+        else navigate("/");
+      } else {
+        setError("Invalid response format from server.");
       }
 
-      const userRole = response.data.user.role;
-
-      // Redirect based on role
-      if (userRole === "admin") navigate("/adminDashboard", { replace: true });
-      else if (userRole === "employee") navigate("/employeeDashboard", { replace: true });
-      else if (userRole === "user") navigate("/userDashboard", { replace: true });
-      else navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Try again.");
+      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }

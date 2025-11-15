@@ -24,13 +24,13 @@ export default function AllAccounts() {
     fetchAllAccounts();
   }, []);
 
-  // ✅ Filter out "unknown" or invalid statuses first
+  // Filter out "unknown" or invalid statuses first
   const validAccounts = accounts.filter(
     (acc) =>
-      ["active", "pending", "frozen"].includes(acc.status?.toLowerCase())
+      ["pending", "frozen"].includes(acc.status?.toLowerCase())
   );
 
-  // ✅ Then apply search filtering
+  // Then apply search filtering
   const filteredAccounts = validAccounts.filter((acc) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -93,7 +93,6 @@ export default function AllAccounts() {
             <th>Email</th>
             <th>Mobile</th>
             <th>Account Type</th>
-            <th>Branch</th>
             <th>Status</th>
             <th>Created On</th>
           </tr>
@@ -102,14 +101,13 @@ export default function AllAccounts() {
           {filteredAccounts.length > 0 ? (
             filteredAccounts.map((acc, i) => (
               <tr key={acc._id}>
-                <td>{i + 1}</td>
-                <td>{acc.fullName}</td>
-                <td>{acc.email}</td>
-                <td>{acc.mobile}</td>
-                <td>{acc.accountType}</td>
-                <td>{acc.branch || "-"}</td>
+                <td className="text-center">{i + 1}</td>
+                <td className="text-center">{acc.fullName}</td>
+                <td className="text-center">{acc.email}</td>
+                <td className="text-center">{acc.mobile}</td>
+                <td className="text-center">{acc.accountType}</td>
                 <td className="text-center">{statusBadge(acc.status)}</td>
-                <td>{new Date(acc.createdAt).toLocaleDateString()}</td>
+                <td className="text-center">{new Date(acc.createdAt).toLocaleDateString()}</td>
               </tr>
             ))
           ) : (

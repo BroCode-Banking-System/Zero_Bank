@@ -13,10 +13,16 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to logout?");
-    if (confirmed) {
-      navigate("/");
-    }
+    // ✅ Clear all stored user session data
+    localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+
+    // ✅ Navigate to login/home page
+    navigate("/");
+
+    // Optional feedback for better UX
+    alert("You have been logged out successfully.");
   };
 
   return (
@@ -82,7 +88,6 @@ export default function Sidebar() {
             </div>
           </li>
 
-
           {/* Transactions with sub-menu */}
           <li>
             <a
@@ -97,11 +102,6 @@ export default function Sidebar() {
             </a>
             <div className="collapse" id="transactionsSubMenu">
               <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4">
-                {/* <li>
-                  <Link to="/adminDashboard/fund-transfer" className="nav-link">
-                    Fund Transfer
-                  </Link>
-                </li> */}
                 <li>
                   <Link to="/adminDashboard/deposit-history" className="nav-link">
                     Deposit History
@@ -116,7 +116,7 @@ export default function Sidebar() {
             </div>
           </li>
 
-           <li>
+          <li>
             <Link to="/adminDashboard/employeeManagement" className="nav-link d-flex align-items-center gap-2">
               <FaUser /> Employees
             </Link>
@@ -128,7 +128,7 @@ export default function Sidebar() {
             </Link>
           </li>
 
-          {/* Logout Button */}
+          {/* ✅ Logout Button */}
           <li className="mt-3">
             <button
               onClick={handleLogout}

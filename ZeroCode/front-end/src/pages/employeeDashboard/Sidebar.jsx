@@ -7,16 +7,32 @@ import {
   FaUser,
   FaSignOutAlt
 } from "react-icons/fa";
+import { useEffect } from "react";
 
 export default function Sidebar() {
   const navigate = useNavigate();
 
-  // Handle logout with confirmation
+  // ✅ Check if logged-in user is employee (protect session)
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    const username = localStorage.getItem("username");
+
+    console.log("Sidebar session check:", { role, username });
+
+    if (!role || role !== "employee") {
+      alert("Access denied. Please log in as Employee.");
+      navigate("/"); // redirect to login if unauthorized
+    }
+  }, [navigate]);
+
+  // ✅ Logout with cleanup + confirmation
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
     if (confirmed) {
-      // Optional: clear auth/token here
-      navigate("/"); // Redirect to home page after logout
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      localStorage.removeItem("token"); // optional if using JWTs
+      navigate("/"); // redirect to home/login
     }
   };
 
@@ -26,7 +42,7 @@ export default function Sidebar() {
       style={{ width: "220px", minHeight: "100vh" }}
     >
       {/* --- Header (Logo + Brand) --- */}
-      <div className="d-flex align-items-center px-3 py-4">
+      <div className="d-flex align-items-center px-3 py-4 border-bottom">
         <img
           src={logoImage}
           alt="ZeroBank"
@@ -40,18 +56,24 @@ export default function Sidebar() {
       <div className="p-3 flex-grow-1">
         <ul className="nav nav-pills flex-column mb-auto">
           <li className="nav-item">
-            <Link to="/employeeDashboard" className="nav-link d-flex align-items-center gap-2">
+            <Link
+              to="/employeeDashboard"
+              className="nav-link d-flex align-items-center gap-2"
+            >
               <FaTachometerAlt /> Dashboard
             </Link>
           </li>
 
           <li>
-            <Link to="/employeeDashboard/accounts" className="nav-link d-flex align-items-center gap-2">
+            <Link
+              to="/employeeDashboard/accounts"
+              className="nav-link d-flex align-items-center gap-2"
+            >
               <FaWallet /> Accounts
             </Link>
           </li>
 
-          {/* Transactions with sub-menu */}
+          {/* --- Transactions submenu --- */}
           <li>
             <a
               className="nav-link dropdown-toggle d-flex align-items-center gap-2"
@@ -66,17 +88,26 @@ export default function Sidebar() {
             <div className="collapse" id="transactionsSubMenu">
               <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small ms-4">
                 <li>
-                  <Link to="/employeeDashboard/fund-transfer" className="nav-link">
+                  <Link
+                    to="/employeeDashboard/fund-transfer"
+                    className="nav-link"
+                  >
                     Fund Transfer
                   </Link>
                 </li>
                 <li>
-                  <Link to="/employeeDashboard/deposit-history" className="nav-link">
+                  <Link
+                    to="/employeeDashboard/deposit-history"
+                    className="nav-link"
+                  >
                     Deposit History
                   </Link>
                 </li>
                 <li>
-                  <Link to="/employeeDashboard/withdrawal-history" className="nav-link">
+                  <Link
+                    to="/employeeDashboard/withdrawal-history"
+                    className="nav-link"
+                  >
                     Withdrawal History
                   </Link>
                 </li>
@@ -85,12 +116,15 @@ export default function Sidebar() {
           </li>
 
           <li>
-            <Link to="/employeeDashboard/profile" className="nav-link d-flex align-items-center gap-2">
+            <Link
+              to="/employeeDashboard/profile"
+              className="nav-link d-flex align-items-center gap-2"
+            >
               <FaUser /> Profile
             </Link>
           </li>
 
-          {/* Logout Button */}
+          {/* --- Logout --- */}
           <li className="mt-3">
             <button
               onClick={handleLogout}

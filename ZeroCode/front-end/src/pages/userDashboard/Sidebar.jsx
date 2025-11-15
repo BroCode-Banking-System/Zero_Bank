@@ -11,13 +11,18 @@ import {
 export default function Sidebar() {
   const navigate = useNavigate();
 
-  // Handle logout with confirmation
+  // ✅ Improved logout (like adminDashboard)
   const handleLogout = () => {
-    const confirmed = window.confirm("Are you sure you want to logout?");
-    if (confirmed) {
-      // Optional: clear auth/token here
-      navigate("/"); // Redirect to home page after logout
-    }
+    // Clear local storage
+    localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+
+    // Redirect safely without full reload
+    navigate("/");
+
+    // Optional UX feedback
+    alert("You have been logged out successfully.");
   };
 
   return (
@@ -90,7 +95,7 @@ export default function Sidebar() {
             </Link>
           </li>
 
-          {/* Logout Button */}
+          {/* ✅ Logout Button */}
           <li className="mt-3">
             <button
               onClick={handleLogout}

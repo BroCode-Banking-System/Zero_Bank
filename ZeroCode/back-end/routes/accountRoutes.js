@@ -1,3 +1,4 @@
+// routes/accountRoutes.js
 const express = require("express");
 const router = express.Router();
 const path = require("path");
@@ -23,12 +24,13 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// 📥 Public route — Create new account (with document upload)
 router.post(
   "/accounts",
   upload.fields([
     { name: "aadhaardoc", maxCount: 1 },
     { name: "pandoc", maxCount: 1 },
+    { name: "signature", maxCount: 1 },
+    { name: "photo", maxCount: 1 },
   ]),
   createAccount
 );

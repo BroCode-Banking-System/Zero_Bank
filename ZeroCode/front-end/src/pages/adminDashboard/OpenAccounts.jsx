@@ -63,20 +63,18 @@ export default function OpenAccounts() {
             <th>Email</th>
             <th>Mobile</th>
             <th>Account Type</th>
-            <th>Branch</th>
             <th>Approved On</th>
           </tr>
         </thead>
         <tbody>
           {filteredAccounts.map((acc, i) => (
             <tr key={acc._id}>
-              <td>{i + 1}</td>
-              <td>{acc.fullName}</td>
-              <td>{acc.email}</td>
-              <td>{acc.mobile}</td>
-              <td>{acc.accountType}</td>
-              <td>{acc.branch || "-"}</td>
-              <td>{new Date(acc.updatedAt).toLocaleDateString()}</td>
+              <td className="text-center">{i + 1}</td>
+              <td className="text-center">{acc.fullName}</td>
+              <td className="text-center">{acc.email}</td>
+              <td className="text-center">{acc.mobile}</td>
+              <td className="text-center">{acc.accountType}</td>
+              <td className="text-center">{new Date(acc.updatedAt).toLocaleDateString()}</td>
             </tr>
           ))}
         </tbody>

@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const Employee = require("../models/employeeModel");
 const Account = require("../models/accountModel");
-const Transaction = require("../models/adminTransactionModel");
+const Transaction = require("../models/transactionModel");
 const AdminUsers = require("../models/adminModel");
 
 // ==============================
@@ -106,6 +106,54 @@ exports.freezeAccount = async (req, res) => {
     res.status(500).json({ message: "Error freezing account" });
   }
 };
+
+
+
+// ========== USER CONTROLLERS ==========
+
+// Get all users
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Create user
+exports.createUser = async (req, res) => {
+  try {
+    const data = await hashPasswordIfNeeded(req.body);
+    const newUser = new User(data);
+    await newUser.save();
+    res.json({ message: "User created successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update user
+exports.updateUser = async (req, res) => {
+  try {
+    const updateData = await hashPasswordIfNeeded(req.body);
+    await User.findByIdAndUpdate(req.params.id, updateData);
+    res.json({ message: "User updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 // ==============================
 // 🔐 Admin Password Management

@@ -55,8 +55,7 @@ export default function AdminAccounts() {
       acc.fullName?.toLowerCase().includes(term) ||
       acc.email?.toLowerCase().includes(term) ||
       acc.mobile?.toString().includes(term) ||
-      acc.accountType?.toLowerCase().includes(term) ||
-      (acc.branch || "").toLowerCase().includes(term)
+      acc.accountType?.toLowerCase().includes(term)
     );
   });
 
@@ -95,12 +94,11 @@ export default function AdminAccounts() {
       <Table striped bordered hover responsive className="align-middle">
         <thead className="table-dark text-center">
           <tr>
-            <th>#</th>
+            <th className="text-center">#</th>
             <th>Full Name</th>
             <th>Email</th>
             <th>Mobile</th>
             <th>Account Type</th>
-            <th>Branch</th>
             <th>Date</th>
             <th>Actions</th>
           </tr>
@@ -109,13 +107,12 @@ export default function AdminAccounts() {
         <tbody>
           {filteredAccounts.map((acc, index) => (
             <tr key={acc._id}>
-              <td>{index + 1}</td>
-              <td>{acc.fullName}</td>
-              <td>{acc.email}</td>
-              <td>{acc.mobile}</td>
-              <td>{acc.accountType}</td>
-              <td>{acc.branch || "-"}</td>
-              <td>{new Date(acc.createdAt).toLocaleDateString()}</td>
+              <td className="text-center">{index + 1}</td>
+              <td className="text-center">{acc.fullName}</td>
+              <td className="text-center">{acc.email}</td>
+              <td className="text-center">{acc.mobile}</td>
+              <td className="text-center">{acc.accountType}</td>
+              <td className="text-center">{new Date(acc.createdAt).toLocaleDateString()}</td>
               <td className="text-center">
                 <Button
                   variant="success"

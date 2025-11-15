@@ -4,7 +4,6 @@ const Customer = require("../models/userModel");
 const Account = require("../models/accountModel");
 const bcrypt = require("bcryptjs");
 const Loan = require("../models/loanModel");
-const Task = require("../models/taskModel");
 
 // Get all employees
 exports.getAllEmployees = async (req, res) => {
@@ -123,40 +122,5 @@ exports.getBranchSummary = async (req, res) => {
   } catch (err) {
     console.error("Error fetching branch summary:", err);
     res.status(500).json({ message: "Failed to fetch branch summary" });
-  }
-};
-
-
-// GET /api/employees/tasks
-exports.getAllTasks = async (req, res) => {
-  try {
-    const tasks = await Task.find().sort({ createdAt: -1 });
-    res.json(tasks);
-  } catch (err) {
-    console.error("Error fetching tasks:", err);
-    res.status(500).json({ message: "Server error fetching tasks" });
-  }
-};
-
-// PATCH /api/employees/tasks/:id
-exports.updateTaskStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
-  if (!["Approved", "Rejected"].includes(status)) {
-    return res.status(400).json({ message: "Invalid status update" });
-  }
-
-  try {
-    const task = await Task.findById(id);
-    if (!task) return res.status(404).json({ message: "Task not found" });
-
-    task.status = status;
-    await task.save();
-
-    res.json({ message: `Task ${status.toLowerCase()} successfully`, task });
-  } catch (err) {
-    console.error("Error updating task:", err);
-    res.status(500).json({ message: "Server error updating task" });
   }
 };

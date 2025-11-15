@@ -1,4 +1,3 @@
-//adminDashboard/Dashboard.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -20,6 +19,24 @@ export default function AdminDashboard() {
     transactionsToday: 0,
     pendingApprovals: 0,
   });
+
+  // Add username state
+  const [username, setUsername] = useState("");
+
+  // Check if admin session exists
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    const storedUsername = localStorage.getItem("username");
+
+    if (!role || role !== "admin") {
+      alert("Access denied. Please log in as Admin.");
+      navigate("/"); 
+      return;
+    }
+
+    setUsername(storedUsername || "Admin");
+    console.log(`Admin logged in: ${storedUsername}`);
+  }, [navigate]);
 
   // Fetch stats from backend
   useEffect(() => {
@@ -91,10 +108,15 @@ export default function AdminDashboard() {
       className="container mt-4 py-4"
       style={{ backgroundColor: "whitesmoke", minHeight: "100vh" }}
     >
-      <h2 className="fw-bold mb-1">Administrator Dashboard</h2>
-      <p className="text-muted mb-4">
-        Monitor bank operations and manage users efficiently.
-      </p>
+      {/* Header with Logout */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 className="fw-bold mb-1">Welcome back, {username}!</h2>
+          <p className="text-muted mb-0">
+            Monitor bank operations and manage users efficiently.
+          </p>
+        </div>
+      </div>
 
       {/* Stats Cards */}
       <div className="row g-3 mb-2">
