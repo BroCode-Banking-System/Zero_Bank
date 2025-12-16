@@ -13,11 +13,13 @@ import OpenInsurance from "./pages/insurance";
 import LoginModal from "./component/loginmodal";
 import Footer from "./component/footer";
 
+// Protected Route Component (Combined)
+import ProtectedRoute from "./component/ProtectedRoute";
+
 // Admin Dashboard
 import DashFooterA from "./pages/adminDashboard/Footer";
 import AdminDashboard from "./pages/adminDashboard/Dashboard";
 import AdminSidebar from "./pages/adminDashboard/Sidebar";
-//import AdminAccounts from "./pages/adminDashboard/Accounts";
 import PendingAccounts from "./pages/adminDashboard/PendingAccounts";
 import OpenAccounts from "./pages/adminDashboard/OpenAccounts";
 import ClosedAccounts from "./pages/adminDashboard/ClosedAccounts";
@@ -52,22 +54,26 @@ import UserWithdrawalHistory from "./pages/userDashboard/WithdrawalHistory";
 import UserSettings from "./pages/userDashboard/Settings";
 import UserProfile from "./pages/userDashboard/Profile";
 
+
 function App() {
-  const isLoggedIn = true;
+  const isLoggedIn = true; 
   const location = useLocation();
 
-  // check if route starts with /adminDashboard
-  const isDashboardRoute = location.pathname.startsWith("/adminDashboard") || location.pathname.startsWith("/employeeDashboard") || location.pathname.startsWith("/userDashboard");
+  const isDashboardRoute =
+    location.pathname.startsWith("/adminDashboard") ||
+    location.pathname.startsWith("/employeeDashboard") ||
+    location.pathname.startsWith("/userDashboard");
+
+  const hideNavbarOn = ["/loan", "/account", "/insurance"];
+  const hideNavbar = hideNavbarOn.includes(location.pathname);
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      {/* Navbar only for public pages */}
-      {!isDashboardRoute && <Navbar />}
+      {!isDashboardRoute && !hideNavbar && <Navbar />}
 
-      {/* Main Content */}
       <div className="flex-grow-1">
         <Routes>
-          {/* Public routes */}
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
@@ -75,30 +81,46 @@ function App() {
           <Route path="/loan" element={<OpenLoan />} />
           <Route path="/insurance" element={<OpenInsurance />} />
 
-          {/* Dashboard routes */}
+          {/* Admin Dashboard Protected */}
           <Route
             path="/adminDashboard/*"
-            element={isLoggedIn ? <AdminDashboardWrapper /> : <Navigate to="/login" />}
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <AdminDashboardWrapper />
+              </ProtectedRoute>
+            }
           />
+
+          {/* Employee Dashboard Protected */}
           <Route
             path="/employeeDashboard/*"
-            element={isLoggedIn ? <EmployeeDashboardWrapper /> : <Navigate to="/login" />}
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <EmployeeDashboardWrapper />
+              </ProtectedRoute>
+            }
           />
+
+          {/* User Dashboard Protected */}
           <Route
             path="/userDashboard/*"
-            element={isLoggedIn ? <UserDashboardWrapper /> : <Navigate to="/login" />}
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <UserDashboardWrapper />
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </div>
 
-      {/* Footer */}
       {!isDashboardRoute && <LoginModal />}
-      {!isDashboardRoute && <Footer />} {/* Public pages */}
+      {!isDashboardRoute && <Footer />}
     </div>
   );
 }
 
-// Admin Dashboard Wrapper
+/* ------------------- DASHBOARD WRAPPERS ------------------- */
+
 function AdminDashboardWrapper() {
   return (
     <div className="d-flex" style={{ width: "100%", bottom: 0 }}>
@@ -106,7 +128,6 @@ function AdminDashboardWrapper() {
       <div className="flex-grow-1">
         <Routes>
           <Route path="" element={<AdminDashboard />} />
-          {/* <Route path="accounts" element={<AdminAccounts />} /> */}
           <Route path="accounts/pendingAccounts" element={<PendingAccounts />} />
           <Route path="accounts/openAccounts" element={<OpenAccounts />} />
           <Route path="accounts/closedAccounts" element={<ClosedAccounts />} />
@@ -125,10 +146,9 @@ function AdminDashboardWrapper() {
   );
 }
 
-// Employee Dashboard Wrapper
 function EmployeeDashboardWrapper() {
   return (
-    <div className="d-flex" style={{  width: "100%", bottom: 0 }}>
+    <div className="d-flex" style={{ width: "100%", bottom: 0 }}>
       <EmployeeSidebar />
       <div className="flex-grow-1">
         <Routes>
@@ -146,7 +166,6 @@ function EmployeeDashboardWrapper() {
   );
 }
 
-// User Dashboard Wrapper
 function UserDashboardWrapper() {
   return (
     <div className="d-flex" style={{ width: "100%", bottom: 0 }}>

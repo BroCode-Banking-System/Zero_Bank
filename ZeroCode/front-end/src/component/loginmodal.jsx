@@ -1,3 +1,4 @@
+// front-end/src/component/loginmodal.jsx
 import React, { useState } from "react";
 import { FaUser, FaLock } from "react-icons/fa";
 import axios from "axios";
@@ -58,7 +59,7 @@ const LoginModal = () => {
 
       console.log("Login Success:", response.data);
 
-      // ✅ Store common user data in localStorage
+      // Store common user data in localStorage
       if (response.data && response.data.user) {
         const { _id, id, username, role: userRole } = response.data.user;
 
@@ -67,13 +68,14 @@ const LoginModal = () => {
 
         localStorage.setItem("userId", userId);
         localStorage.setItem("username", username);
+        localStorage.setItem("fullName", response.data.user.fullName || "");
         localStorage.setItem("role", userRole);
 
         console.log("Saved userId:", localStorage.getItem("userId"));
-        console.log("Saved username:", localStorage.getItem("username"));
+        console.log("Saved fullName:", localStorage.getItem("fullName"));
         console.log("Saved role:", localStorage.getItem("role"));
 
-        // ✅ Redirect based on role
+        // Redirect based on role
         if (userRole === "admin") navigate("/adminDashboard", { replace: true });
         else if (userRole === "employee") navigate("/employeeDashboard", { replace: true });
         else if (userRole === "user") navigate("/userDashboard", { replace: true });
@@ -95,7 +97,7 @@ const LoginModal = () => {
     user: {
       bg: "#f5f9ff",
       fields: [
-        { id: "userId", label: "User ID", type: "text", icon: <FaUser /> },
+        { id: "userId", label: "Customer user ID", type: "text", icon: <FaUser /> },
         { id: "password", label: "Password", type: "password", icon: <FaLock /> },
       ],
     },

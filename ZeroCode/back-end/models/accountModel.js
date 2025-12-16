@@ -1,4 +1,4 @@
-//const { Minimize } = require("lucide-react");
+// back-end/models/accountModel.js
 const mongoose = require("mongoose");
 
 const accountSchema = new mongoose.Schema(
@@ -20,6 +20,7 @@ const accountSchema = new mongoose.Schema(
     language: { type: String },
     consent: { type: Boolean, default: false },
     status: { type: String, enum: ["pending", "active", "closed"], default: "pending" },
+    balance: { type: Number, default: 0},
   },
   { timestamps: true }
 );

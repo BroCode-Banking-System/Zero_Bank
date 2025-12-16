@@ -1,24 +1,61 @@
-const User = require("../models/userModel");
+// back-end/controllers/userController.js
+const Account = require("../models/accountModel");
+const Transaction = require("../models/transactionModel");
 
-// GET Dashboard Data for a user
-exports.getDashboardData = async (req, res) => {
+exports.getUserDashboard = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.senderId;
 
-    // find user by ID
-    const user = await User.findById(userId).select(
-      "fullName totalBalance monthlySpending todayTransactions"
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    // Fetch user account with balance and accountType
+    const account = await Account.findById(userId).select("balance accountType accNo");
+    if (!account) {
+      return res.status(404).json({ message: "Account not found" });
     }
 
-    // send back the user dashboard data
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    res.status(500).json({ message: "Server error", error });
+    // Monthly spending
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const monthlySpendingAgg = await Transaction.aggregate([
+      {
+        $match: {
+          senderId: userId,
+          status: "Success",
+          createdAt: { $gte: startOfMonth },
+        },
+      },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]);
+
+    const monthlySpending = monthlySpendingAgg[0]?.total || 0;
+
+    // Today's transactions
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayAgg = await Transaction.aggregate([
+      {
+        $match: {
+          senderId: userId,
+          status: "Success",
+          type: "Debit", // ADD THIS
+          createdAt: { $gte: startOfMonth },
+        },
+      },
+      { $group: { _id: null, totalToday: { $sum: "$amount" } } },
+    ]);
+
+    res.json({
+      totalBalance: account.balance,
+      accountType: account.accountType, // Added accountType here
+      accNo: account.accNo, // Added accNo here
+      monthlySpending,
+      todayTransactions: todayAgg[0]?.totalToday || 0,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Dashboard fetch failed" });
   }
 };
-

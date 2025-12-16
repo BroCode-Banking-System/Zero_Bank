@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const loanSchema = new mongoose.Schema(
   {
-    customerName: { type: String, required: true },
+    userId: { type: String, required: true },
     amount: { type: Number, required: true },
     interestRate: { type: Number, required: true, default: 8.5 }, 
     termMonths: { type: Number, required: true },

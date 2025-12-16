@@ -18,7 +18,7 @@ export default function ManageUsers() {
     try {
       const res = await axios.get(`http://localhost:8000/api/admin/${entityType}`);
 
-      // 🔹 Filter only users (exclude employee and admin)
+      // Filter only users (exclude employee and admin)
       const filtered = res.data.filter((item) => item.role === "user");
 
       setRecords(filtered);
@@ -94,18 +94,6 @@ export default function ManageUsers() {
           <FaUsers className="me-2 text-primary" />
           Manage Users
         </h2>
-
-        {/* <select
-          value={entityType}
-          onChange={(e) => {
-            setEntityType(e.target.value);
-            handleCancelEdit();
-          }}
-          className="form-select w-auto"
-          disabled
-        >
-          <option value="users">Users</option>
-        </select> */}
       </div>
 
       {/* Add / Edit Form */}

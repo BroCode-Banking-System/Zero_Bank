@@ -27,7 +27,7 @@ export default function AllAccounts() {
   // Filter out "unknown" or invalid statuses first
   const validAccounts = accounts.filter(
     (acc) =>
-      ["pending", "frozen"].includes(acc.status?.toLowerCase())
+      ["active", "pending", "closed"].includes(acc.status?.toLowerCase())
   );
 
   // Then apply search filtering

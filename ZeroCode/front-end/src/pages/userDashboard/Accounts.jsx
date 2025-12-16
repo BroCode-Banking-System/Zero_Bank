@@ -16,6 +16,10 @@ import {
 
 export default function AccountDetails() {
   const accountDetails = [
+    {icon: <FaRegCreditCard />, label: "Full Name", value: "John Doe" },
+    {icon: <FaUniversity />, label: "Email", value: "john.doe@example.com" },
+    {icon: <FaCoins />, label: "Mobile", value: "+91 9876543210" },
+    {icon: <FaMapMarkerAlt />, label: "Address", value: "123, Park Street, Kolkata" },
     { icon: <FaRegCreditCard />, label: "Account Number", value: "1234 5678 9012" },
     { icon: <FaUniversity />, label: "Account Type", value: "Savings Account" },
     { icon: <FaCoins />, label: "Balance", value: "₹1,25,000.50" },
@@ -61,35 +65,6 @@ export default function AccountDetails() {
           </Button>
         </div>
       </Card>
-
-      {/* Optional: Personal Information Update Form */}
-      <Card className="shadow rounded-4 p-3">
-        <Card.Header className="bg-info text-white rounded-top-4 d-flex align-items-center mb-3">
-          <h5 className="mb-0">Personal Information</h5>
-        </Card.Header>
-        <form className="row g-3">
-          <div className="col-md-6">
-            <label className="form-label">Full Name</label>
-            <input type="text" className="form-control" defaultValue="John Doe" />
-          </div>
-          <div className="col-md-6">
-            <label className="form-label">Email</label>
-            <input type="email" className="form-control" defaultValue="john.doe@example.com" />
-          </div>
-          <div className="col-md-6">
-            <label className="form-label">Phone</label>
-            <input type="text" className="form-control" defaultValue="+91 9876543210" />
-          </div>
-          <div className="col-md-6">
-            <label className="form-label">Address</label>
-            <input type="text" className="form-control" defaultValue="123, Park Street, Kolkata" />
-          </div>
-          <div className="col-12">
-            <Button type="submit" variant="primary">Update Information</Button>
-          </div>
-        </form>
-      </Card>
-
     </div>
   );
 }

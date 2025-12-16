@@ -5,6 +5,17 @@ const Account = require("../models/accountModel");
 const Transaction = require("../models/transactionModel");
 const AdminUsers = require("../models/adminModel");
 
+async function hashPasswordIfNeeded(data) {
+  const updatedData = { ...data };
+
+  if (data.password) {
+    const salt = await bcrypt.genSalt(10);
+    updatedData.password = await bcrypt.hash(data.password, salt);
+  }
+
+  return updatedData;
+}
+
 // ==============================
 // 📊 Dashboard Statistics
 // ==============================
@@ -71,25 +82,62 @@ exports.getAllAccounts = async (req, res) => {
   }
 };
 
-// ✅ Approve account
+
+// Approve account + auto create customer
 exports.approveAccount = async (req, res) => {
   try {
+    // Update account status
     const account = await Account.findByIdAndUpdate(
       req.params.id,
       { status: "active" },
       { new: true }
     );
-    if (!account)
-      return res.status(404).json({ message: "Account not found" });
 
-    res.status(200).json(account);
+    if (!account) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    // Check if a user already exists with the same email
+    const existingUser = await User.findOne({ email: account.email });
+    if (existingUser) {
+      return res.status(200).json({
+        message: "Account approved. User already exists.",
+        account,
+        user: existingUser,
+      });
+    }
+
+    // Create username from fullName
+    const username =
+      (account.fullName || "user").replace(/\s+/g, "").toLowerCase();
+
+    // Build new user data
+    const newUserData = {
+      username: username,
+      email: account.email,
+      password: account.password || "123456", // fallback if no password
+    };
+
+    // Hash password
+    const hashedData = await hashPasswordIfNeeded(newUserData);
+
+    // Save new user
+    const newUser = new User(hashedData);
+    await newUser.save();
+
+    res.status(200).json({
+      message: "Account approved & User created successfully!",
+      account,
+      user: newUser,
+    });
   } catch (err) {
     console.error("Error approving account:", err);
     res.status(500).json({ message: "Error approving account" });
   }
 };
 
-// ✅ Freeze account
+
+// Freeze account
 exports.freezeAccount = async (req, res) => {
   try {
     const account = await Account.findByIdAndUpdate(

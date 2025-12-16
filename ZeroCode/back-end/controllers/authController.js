@@ -2,7 +2,7 @@
 const bcrypt = require("bcryptjs");
 const AdminUser = require("../models/adminModel");
 const Employee = require("../models/employeeModel");
-const User = require("../models/userModel");
+const User = require("../models/accountModel");
 
 const loginUser = async (req, res) => {
   const { username, password, role } = req.body;
@@ -19,7 +19,8 @@ const loginUser = async (req, res) => {
     } else if (role === "employee") {
       userDoc = await Employee.findOne({ username });
     } else if (role === "user") {
-      userDoc = await User.findOne({ username });
+      // ✔ Login using accNo instead of username
+      userDoc = await User.findOne({ accNo: username });
     } else {
       return res.status(400).json({ message: "Invalid role specified" });
     }
@@ -40,13 +41,14 @@ const loginUser = async (req, res) => {
           ? "/adminDashboard"
           : role === "employee"
           ? "/employeeDashboard"
-          : "/",
+          : "/userDashboard",
+
       user: {
         id: userDoc._id,
-        username: userDoc.username,
-        email: userDoc.email,
+        username: userDoc.username || userDoc.accNo, //  handle accNo
+        email: userDoc.email || "",
         fullName: userDoc.fullName || "",
-        role: userDoc.role,
+        role: role,
       },
     });
   } catch (error) {

@@ -298,7 +298,6 @@ function BankForm({ inline = false }) {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setMessage("Success: Account created.");
-      // Optional: reset form
       setFormData({
         fullName: "",
         email: "",

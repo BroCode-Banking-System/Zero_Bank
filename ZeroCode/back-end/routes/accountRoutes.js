@@ -1,4 +1,3 @@
-// routes/accountRoutes.js
 const express = require("express");
 const router = express.Router();
 const path = require("path");
@@ -10,6 +9,7 @@ const {
   getPendingAccounts,
   approveAccount,
   freezeAccount,
+  getAccountByAccNo,      // ADD NEW CONTROLLER FUNCTION
 } = require("../controllers/accountController");
 
 // File storage config
@@ -35,10 +35,13 @@ router.post(
   createAccount
 );
 
-// 🔹 Admin routes
+// Admin routes
 router.get("/admin/accounts", getAllAccounts);
 router.get("/admin/accounts/pending", getPendingAccounts);
 router.post("/admin/accounts/:id/approve", approveAccount);
 router.post("/admin/accounts/:id/freeze", freezeAccount);
+
+// NEW ROUTE – Fetch account details by Account Number
+router.get("/accounts/:accNo", getAccountByAccNo);
 
 module.exports = router;

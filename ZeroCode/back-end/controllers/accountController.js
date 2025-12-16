@@ -1,17 +1,16 @@
-// controllers/accountController.js
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 
 /**
- * Utility: Generate a unique 12-digit account number
+ * Generate a unique 12-digit account number
  */
 const generateAccountNumber = async () => {
   let accNo;
   let exists = true;
 
   while (exists) {
-    accNo = Math.floor(100000000000 + Math.random() * 900000000000).toString(); // 12 digits
+    accNo = Math.floor(100000000000 + Math.random() * 900000000000).toString();
     exists = await Account.findOne({ accNo });
   }
 
@@ -19,7 +18,7 @@ const generateAccountNumber = async () => {
 };
 
 /**
- * @desc Create a new account (with documents)
+ * @desc Create a new account
  * @route POST /api/accounts
  */
 const createAccount = async (req, res) => {
@@ -43,9 +42,7 @@ const createAccount = async (req, res) => {
     const signature = req.files?.signature?.[0]?.filename || null;
     const photo = req.files?.photo?.[0]?.filename || null;
 
-    // Generate unique accNo and password
     const accNo = await generateAccountNumber();
-    //const password = generatePassword();
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newAccount = new Account({
@@ -73,7 +70,6 @@ const createAccount = async (req, res) => {
     res.status(201).json({
       message: "Account created successfully",
       accNo,
-      password, // optionally return these for admin or confirmation
     });
   } catch (err) {
     console.error("Account creation failed:", err);
@@ -87,8 +83,10 @@ const createAccount = async (req, res) => {
  */
 const getAllAccounts = async (req, res) => {
   try {
-    const validStatuses = ["pending", "active", "frozen"];
-    const accounts = await Account.find({ status: { $in: validStatuses } }).sort({ createdAt: -1 });
+    const accounts = await Account.find({
+      status: { $in: ["pending", "active", "frozen"] },
+    }).sort({ createdAt: -1 });
+
     res.status(200).json(accounts);
   } catch (error) {
     console.error("Error fetching accounts:", error);
@@ -102,7 +100,10 @@ const getAllAccounts = async (req, res) => {
  */
 const getPendingAccounts = async (req, res) => {
   try {
-    const pending = await Account.find({ status: "pending" }).sort({ createdAt: -1 });
+    const pending = await Account.find({ status: "pending" }).sort({
+      createdAt: -1,
+    });
+
     res.status(200).json(pending);
   } catch (error) {
     console.error("Error fetching pending accounts:", error);
@@ -111,7 +112,7 @@ const getPendingAccounts = async (req, res) => {
 };
 
 /**
- * @desc Approve an account
+ * @desc Approve account
  * @route POST /api/admin/accounts/:id/approve
  */
 const approveAccount = async (req, res) => {
@@ -129,9 +130,8 @@ const approveAccount = async (req, res) => {
   }
 };
 
-
 /**
- * @desc Freeze (reject) an account
+ * @desc Freeze (reject) account
  * @route POST /api/admin/accounts/:id/freeze
  */
 const freezeAccount = async (req, res) => {
@@ -149,10 +149,65 @@ const freezeAccount = async (req, res) => {
   }
 };
 
+/**
+ * NEW: Fetch account details by Account Number
+ * @route GET /api/accounts/:accNo
+ */
+// 
+
+const getAccountByAccNo = async (req, res) => {
+  try {
+    const accNo = req.params.accNo.trim();
+
+    // Match string or number
+    const account = await Account.findOne({
+      $or: [
+        { accNo: accNo },
+        { accNo: Number(accNo) },
+      ],
+    });
+
+    // Case 1: Account not found
+    if (!account) {
+      return res.status(404).json({
+        success: false,
+        message: "Account not exists",
+      });
+    }
+
+    // Case 2: Account found but not active
+    if (account.status !== "active") {
+      return res.status(403).json({
+        success: false,
+        message: "Account is not active",
+      });
+    }
+
+    // Case 3: Active account → send full name
+    return res.json({
+      success: true,
+      account: {
+        name: account.fullName,
+        accNo: account.accNo,
+        // ifsc: account.ifscCode,
+      },
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
 module.exports = {
   createAccount,
   getAllAccounts,
   getPendingAccounts,
   approveAccount,
   freezeAccount,
+  getAccountByAccNo, 
 };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTasks, FaClipboardList, FaBuilding, FaCheck, FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ✅ for redirect if not employee
+import { useNavigate } from "react-router-dom"; 
 
 export default function EmployeeDashboard() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function EmployeeDashboard() {
   const [tasks, setTasks] = useState([]);
   const [showTaskPanel, setShowTaskPanel] = useState(false);
 
-  // ✅ Role validation on mount
+  // Role validation on mount
   useEffect(() => {
     const role = localStorage.getItem("role");
     const username = localStorage.getItem("username");
@@ -30,7 +30,7 @@ export default function EmployeeDashboard() {
     }
   }, [navigate]);
 
-  // ✅ Fetch branch summary
+  // Fetch branch summary
   useEffect(() => {
     const fetchBranchSummary = async () => {
       try {
@@ -43,7 +43,7 @@ export default function EmployeeDashboard() {
     fetchBranchSummary();
   }, []);
 
-  // ✅ Fetch tasks
+  // Fetch tasks
   const fetchTasks = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/employees/tasks");
@@ -53,7 +53,7 @@ export default function EmployeeDashboard() {
     }
   };
 
-  // ✅ Handle approve/reject with optimistic update
+  // Handle approve/reject with optimistic update
   const handleTaskAction = async (id, action) => {
     setTasks((prev) =>
       prev.map((task) =>
@@ -77,7 +77,7 @@ export default function EmployeeDashboard() {
     }
   };
 
-  // ✅ Toggle task panel with lazy loading
+  // Toggle task panel with lazy loading
   const handleShowTasks = async () => {
     if (!showTaskPanel) await fetchTasks();
     setShowTaskPanel(!showTaskPanel);

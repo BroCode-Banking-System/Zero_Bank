@@ -1,72 +1,80 @@
+// back-end/controllers/transactionController.js
 const Transaction = require("../models/transactionModel");
 const Account = require("../models/accountModel");
 
-/**
- * @desc Transfer funds between accounts (by accNo)
- * @route POST /api/transactions/transfer
- */
+
 const transferFunds = async (req, res) => {
   try {
-    const {
-      senderAccNo,
-      recipientName,
-      recipientAccount,
-      ifscCode,
-      amount,
-      description,
-    } = req.body;
+    const { senderAccNo, recipientName, recipientAccount, amount, description } = req.body;
 
-    // ✅ Validate inputs
-    if (!senderAccNo || !recipientAccount || !ifscCode || !amount) {
+    if (!recipientAccount || !amount || !senderAccNo) {
       return res.status(400).json({ message: "All required fields must be filled" });
     }
 
-    // ✅ Fetch sender account
-    const senderAccount = await Account.findOne({ accNo: senderAccNo });
-    if (!senderAccount) {
-      return res.status(404).json({ message: "Sender account not found" });
+    const amountNum = Number(amount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      return res.status(400).json({ message: "Invalid transfer amount" });
     }
 
-    // ✅ Check sufficient balance
-    if (senderAccount.balance < amount) {
-      return res.status(400).json({ message: "Insufficient balance" });
-    }
+    const senderAcc = String(senderAccNo).trim();
+    const recipientAcc = String(recipientAccount).trim();
 
-    // ✅ Deduct from sender
-    senderAccount.balance -= amount;
+    const senderAccount = await Account.findOne({ accNo: senderAcc });
+    if (!senderAccount) return res.status(404).json({ message: "Sender account not found" });
+    if (senderAccount.balance < amountNum) return res.status(400).json({ message: "Insufficient balance" });
+
+    senderAccount.balance -= amountNum;
     await senderAccount.save();
 
-    // ✅ Try to find recipient (internal transfer)
-    const recipientAccountDoc = await Account.findOne({ accNo: recipientAccount });
+    const recipientAccountDoc = await Account.findOne({ accNo: recipientAcc });
     if (recipientAccountDoc) {
-      recipientAccountDoc.balance += amount;
+      recipientAccountDoc.balance += amountNum;
       await recipientAccountDoc.save();
+
+      await Transaction.create({
+        senderId: recipientAccountDoc._id,
+        recipientName: senderAccount.fullName,
+        recipientAccount: senderAcc,
+        amount: amountNum,
+        description: "Credit from " + senderAccount.fullName,
+        status: "Success",
+        type: "Credit",
+      });
     }
 
-    // ✅ Create transaction record
     const transaction = new Transaction({
-      senderId: senderAccNo, // store accNo as identifier (optional)
+      senderId: senderAccount._id,
       recipientName,
-      recipientAccount,
-      ifscCode,
-      amount,
+      recipientAccount: recipientAcc,
+      amount: amountNum,
       description,
       status: "Success",
+      type: "Debit",
     });
 
     await transaction.save();
 
-    res.status(201).json({
-      message: "Fund transfer successful",
-      transaction,
-    });
+    res.status(201).json({ message: "Fund transfer successful", transaction });
   } catch (error) {
     console.error("Transfer Error:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-module.exports = { transferFunds };
+const getRecentTransactions = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const transactions = await Transaction.find({ senderId: userId })
+      .sort({ createdAt: -1 })   // latest first
+      .limit(5);                 // last 5 transactions
+
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch recent transactions" });
+  }
+};
+
+
+module.exports = { transferFunds, getRecentTransactions };

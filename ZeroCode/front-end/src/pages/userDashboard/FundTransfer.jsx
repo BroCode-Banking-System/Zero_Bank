@@ -10,7 +10,6 @@ export default function FundTransfer() {
   const [formData, setFormData] = useState({
     recipientName: "",
     recipientAccount: "",
-    ifscCode: "",
     amount: "",
     description: "",
   });
@@ -18,33 +17,86 @@ export default function FundTransfer() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  // Mock sender ID (in real app, get this from logged-in user context or JWT)
-  const senderId = localStorage.getItem("userId") || "672f91dc71c849a79b64d198";
+  // Get sender account number (logged-in user)
+  const senderAccNo = localStorage.getItem("username");
 
-  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
+  // Fetch recipient details when user leaves input field
+  const handleAccountBlur = async () => {
+    const acc = formData.recipientAccount.trim();
+    if (!acc) return;
+    if (acc === senderAccNo) {
+      setFormData((prev) => ({ ...prev, recipientName: "" }));
+      return setMessage({
+        type: "danger",
+        text: "You cannot transfer funds to your own account.",
+      });
+    }
+
+    try {
+      const res = await axios.get(`http://localhost:8000/api/accounts/${acc}`);
+
+      if (res.data && res.data.account) {
+        setFormData((prev) => ({
+          ...prev,
+          recipientName: res.data.account.name,
+        }));
+      } else {
+        setFormData((prev) => ({ ...prev, recipientName: "" }));
+        setMessage({
+          type: "danger",
+          text: "Account not found or inactive.",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage({
+        type: "danger",
+        text: "Error fetching account details",
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: "", text: "" });
 
-    // Simple validation
-    if (!formData.recipientName || !formData.recipientAccount || !formData.ifscCode || !formData.amount) {
+    if (!senderAccNo) {
+      return setMessage({
+        type: "danger",
+        text: "Session expired. Please log in again.",
+      });
+    }
+
+    // Validation
+    if (!formData.recipientName || !formData.recipientAccount || !formData.amount) {
       return setMessage({ type: "danger", text: "Please fill all required fields." });
+    }
+
+    if (formData.amount <= 0) {
+      return setMessage({ type: "danger", text: "Amount must be greater than 0." });
     }
 
     try {
       setLoading(true);
+
       const response = await axios.post("http://localhost:8000/api/transactions/transfer", {
-        senderId,
+        senderAccNo,
         ...formData,
       });
 
       setMessage({ type: "success", text: response.data.message });
-      setFormData({ recipientName: "", recipientAccount: "", ifscCode: "", amount: "", description: "" });
+
+      setFormData({
+        recipientName: "",
+        recipientAccount: "",
+        amount: "",
+        description: "",
+       // type: "debit",
+      });
     } catch (error) {
       const errMsg = error.response?.data?.message || "Something went wrong!";
       setMessage({ type: "danger", text: errMsg });
@@ -54,11 +106,35 @@ export default function FundTransfer() {
   };
 
   const formFields = [
-    { icon: <FaUser />, name: "recipientName", label: "Recipient Name", type: "text", placeholder: "Enter recipient name" },
-    { icon: <FaWallet />, name: "recipientAccount", label: "Recipient Account", type: "text", placeholder: "Enter account number" },
-    { icon: <FaUser />, name: "ifscCode", label: "IFSC Code", type: "text", placeholder: "Enter IFSC code" },
-    { icon: <FaRupeeSign />, name: "amount", label: "Amount", type: "number", placeholder: "Enter amount" },
-    { icon: <FaUser />, name: "description", label: "Description", type: "text", placeholder: "Optional description" },
+    {
+      icon: <FaWallet />,
+      name: "recipientAccount",
+      label: "Recipient Account*",
+      type: "text",
+      placeholder: "Enter account number",
+    },
+    {
+      icon: <FaUser />,
+      name: "recipientName",
+      label: "Recipient Name",
+      type: "text",
+      placeholder: "Auto-filled",
+      disabled: true,
+    },
+    {
+      icon: <FaRupeeSign />,
+      name: "amount",
+      label: "Amount*",
+      type: "number",
+      placeholder: "Enter amount",
+    },
+    {
+      icon: <FaUser />,
+      name: "description",
+      label: "Description",
+      type: "text",
+      placeholder: "Optional description",
+    },
   ];
 
   return (
@@ -80,28 +156,27 @@ export default function FundTransfer() {
             {formFields.map((field, idx) => (
               <div key={idx} className="col-md-6">
                 <div className="d-flex align-items-center gap-3 p-2">
-                  <div
-                    className="text-dark d-flex justify-content-center align-items-center"
-                    style={{ width: "35px", height: "35px" }}
-                  >
+                  <div className="text-dark d-flex justify-content-center align-items-center" style={{ width: "35px", height: "35px" }}>
                     {field.icon}
                   </div>
                   <div className="w-100">
                     <label className="form-label small">{field.label}</label>
                     <input
-                      name={field.name}
                       type={field.type}
-                      className="form-control"
+                      name={field.name}
                       placeholder={field.placeholder}
+                      className="form-control"
                       value={formData[field.name]}
                       onChange={handleChange}
-                      required={field.name !== "description"}
+                      disabled={field.disabled}
+                      onBlur={field.name === "recipientAccount" ? handleAccountBlur : undefined}
                     />
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
           <div className="text-center mt-4">
             <Button type="submit" variant="primary" className="px-4" disabled={loading}>
               {loading ? "Transferring..." : "Transfer"}

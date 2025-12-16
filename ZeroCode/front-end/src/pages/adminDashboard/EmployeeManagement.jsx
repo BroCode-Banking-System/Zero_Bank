@@ -27,7 +27,7 @@ export default function EmployeeManagement() {
     role: "employee",
   });
 
-  // 🔹 Fetch all employees
+  // Fetch all employees
   const fetchEmployees = async () => {
     try {
       setLoading(true);
@@ -46,12 +46,12 @@ export default function EmployeeManagement() {
     fetchEmployees();
   }, []);
 
-  // 🔹 Handle form input
+  // Handle form input
   const handleChange = (e) => {
     setEmployeeData({ ...employeeData, [e.target.name]: e.target.value });
   };
 
-  // 🔹 Add or Update employee
+  // Add or Update employee
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -85,7 +85,7 @@ export default function EmployeeManagement() {
     setIsEdit(false);
   };
 
-  // 🔹 Delete employee
+  // Delete employee
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       try {
@@ -98,7 +98,7 @@ export default function EmployeeManagement() {
     }
   };
 
-  // 🔹 Open modal for editing
+  // Open modal for editing
   const handleEdit = (emp) => {
     setSelectedEmployee(emp);
     setEmployeeData({
@@ -147,7 +147,7 @@ export default function EmployeeManagement() {
           </Button>
         </Card.Header>
 
-        {/* 🔍 Search Bar */}
+        {/* Search Bar */}
         <div className="d-flex justify-content-end mt-3">
           <InputGroup style={{ maxWidth: "350px" }}>
             <InputGroup.Text>
@@ -162,7 +162,7 @@ export default function EmployeeManagement() {
           </InputGroup>
         </div>
 
-        {/* 🧾 Employee Table */}
+        {/* Employee Table */}
         <Table striped bordered hover responsive className="align-middle mt-3">
           <thead className="table-dark text-center">
             <tr>
@@ -214,7 +214,7 @@ export default function EmployeeManagement() {
         </Table>
       </Card>
 
-      {/* 🟢 Add/Edit Modal */}
+      {/* Add/Edit Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>
