@@ -16,7 +16,7 @@ const accountSchema = new mongoose.Schema(
     state: { type: String },
     city: { type: String },
     signature: { type: String },
-    photo: { type: String },
+    photo: { type: String, default: "" },
     language: { type: String },
     consent: { type: Boolean, default: false },
     status: { type: String, enum: ["pending", "active", "closed"], default: "pending" },
