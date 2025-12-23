@@ -1,3 +1,4 @@
+// adminDashboard/Dashboard.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
 
   // Add username state
   const [username, setUsername] = useState("");
+  const [transactions, setTransactions] = useState([]);
 
   // Check if admin session exists
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function AdminDashboard() {
 
     if (!role || role !== "admin") {
       alert("Access denied. Please log in as Admin.");
-      navigate("/"); 
+      navigate("/");
       return;
     }
 
@@ -48,6 +50,14 @@ export default function AdminDashboard() {
         alert("Failed to load dashboard data. Please try again later.");
       });
   }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/api/admin/admin/transactions")
+      .then(res => setTransactions(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
 
   const statCards = [
     {
@@ -153,35 +163,42 @@ export default function AdminDashboard() {
           <thead>
             <tr>
               <th>Transaction ID</th>
-              <th>User</th>
+              <th>Name</th>
               <th>Account</th>
               <th>Amount</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>TXN1024</td>
-              <td>John Doe</td>
-              <td>****1234</td>
-              <td>₹75,000</td>
-              <td className="text-success">Completed</td>
-            </tr>
-            <tr>
-              <td>TXN1025</td>
-              <td>Jane Smith</td>
-              <td>****5678</td>
-              <td>₹5,200</td>
-              <td className="text-danger">Failed</td>
-            </tr>
-            <tr>
-              <td>TXN1026</td>
-              <td>Robert Lee</td>
-              <td>****7890</td>
-              <td>₹2,300</td>
-              <td className="text-warning">Pending</td>
-            </tr>
+            {transactions.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="text-center text-muted">
+                  No transactions found
+                </td>
+              </tr>
+            ) : (
+              transactions.map(txn => (
+                <tr key={txn._id}>
+                  <td>{txn._id.slice(-6).toUpperCase()}</td>
+                  <td>{txn.recipientName}</td>
+                  <td>****{txn.recipientAccount.slice(-4)}</td>
+                  <td>₹{txn.amount.toLocaleString()}</td>
+                  <td
+                    className={
+                      txn.status === "Success"
+                        ? "text-success"
+                        : txn.status === "Failed"
+                          ? "text-danger"
+                          : "text-warning"
+                    }
+                  >
+                    {txn.status}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
+
         </table>
       </div>
     </div>

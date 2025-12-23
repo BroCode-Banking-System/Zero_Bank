@@ -1,10 +1,10 @@
 const express = require("express");
 const {
   getAllAccounts,
+  getAllTransactions,
   approveAccount,
   freezeAccount,
   getDashboardStats,
-  changeAdminPassword,
   getUsers,
   createUser,
   updateUser,
@@ -17,10 +17,10 @@ const router = express.Router();
 // Admin account management
 // ==============================
 router.get("/accounts", getAllAccounts);
+router.get("/admin/transactions", getAllTransactions);
 router.post("/accounts/:id/approve", approveAccount);
 router.post("/accounts/:id/freeze", freezeAccount);
 router.get("/dashboard-stats", getDashboardStats);
-router.put("/change-password/:id", changeAdminPassword);
 
 // ==============================
 // User management routes

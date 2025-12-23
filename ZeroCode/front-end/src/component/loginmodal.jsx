@@ -70,10 +70,15 @@ const LoginModal = () => {
         localStorage.setItem("username", username);
         localStorage.setItem("fullName", response.data.user.fullName || "");
         localStorage.setItem("role", userRole);
+        localStorage.setItem("email", response.data.user.email || "");
+        localStorage.setItem("accNo", response.data.user.accNo || ""); 
+
+        // Debug logs
 
         console.log("Saved userId:", localStorage.getItem("userId"));
         console.log("Saved fullName:", localStorage.getItem("fullName"));
         console.log("Saved role:", localStorage.getItem("role"));
+        console.log("Saved email:", localStorage.getItem("email"));
 
         // Redirect based on role
         if (userRole === "admin") navigate("/adminDashboard", { replace: true });

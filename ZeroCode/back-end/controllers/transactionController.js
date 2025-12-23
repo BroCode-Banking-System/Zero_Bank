@@ -76,5 +76,34 @@ const getRecentTransactions = async (req, res) => {
   }
 };
 
+const getDeposits = async (req, res) => {
+  try {
+    const deposits = await Transaction.find({
+      senderId: req.params.userId,  // match the account number
+      type: "Credit",
+      status: "Success",
+    }).sort({ createdAt: -1 });
 
-module.exports = { transferFunds, getRecentTransactions };
+    res.json(deposits);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get Withdrawal History (Debit)
+const getWithdrawals = async (req, res) => {
+  try {
+    const withdrawals = await Transaction.find({
+      senderId: req.params.userId,
+      type: "Debit",
+      status: "Success",
+    }).sort({ createdAt: -1 });
+
+    res.json(withdrawals);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+module.exports = { transferFunds, getRecentTransactions, getDeposits, getWithdrawals };

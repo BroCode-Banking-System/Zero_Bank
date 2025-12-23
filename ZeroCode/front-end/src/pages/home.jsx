@@ -256,6 +256,7 @@ function BankForm({ inline = false }) {
     consent: false,
     password: "",
     confirmPassword: "",
+    gender: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -293,6 +294,7 @@ function BankForm({ inline = false }) {
       if (formData.pandoc) fd.append("pandoc", formData.pandoc);
       fd.append("password", formData.password);
       fd.append("confirmPassword", formData.confirmPassword);
+      fd.append("gender", formData.gender);
 
       const res = await axios.post("http://localhost:8000/api/accounts", fd, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -315,6 +317,7 @@ function BankForm({ inline = false }) {
         consent: false,
         password: "",
         confirmPassword: "",
+        gender: "",
       });
     } catch (err) {
       const errMsg = err?.response?.data?.message || err.message || "Failed to submit.";
@@ -405,7 +408,7 @@ function BankForm({ inline = false }) {
               name="pan"
               value={formData.pan}
               onChange={(e) => {
-                const value = e.target.value.toUpperCase(); // auto convert to uppercase
+                const value = e.target.value.toUpperCase(); 
                 setFormData({ ...formData, pan: value });
               }}
               placeholder="ABCDE1234F"
@@ -531,6 +534,22 @@ function BankForm({ inline = false }) {
               <option>English</option>
               <option>Hindi</option>
               <option>Bengali</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Gender *</label>
+            <select
+              className="form-select"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+            >
+              <option value="">--Gender--</option>
+              <option>Male</option>
+              <option>Female</option>
               <option>Other</option>
             </select>
           </div>

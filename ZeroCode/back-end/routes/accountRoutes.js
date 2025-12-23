@@ -9,7 +9,9 @@ const {
   getPendingAccounts,
   approveAccount,
   freezeAccount,
-  getAccountByAccNo,      // ADD NEW CONTROLLER FUNCTION
+  getAccountByEmail,
+  downloadStatement,
+  getAccountByAccNo
 } = require("../controllers/accountController");
 
 // File storage config
@@ -41,7 +43,13 @@ router.get("/admin/accounts/pending", getPendingAccounts);
 router.post("/admin/accounts/:id/approve", approveAccount);
 router.post("/admin/accounts/:id/freeze", freezeAccount);
 
-// NEW ROUTE – Fetch account details by Account Number
 router.get("/accounts/:accNo", getAccountByAccNo);
+
+// NEW ROUTE – Fetch account details by EMAIL
+router.get("/accounts/email/:email", getAccountByEmail);
+
+//Fetch account and download account statement
+router.get("/accounts/:accNo/statement", downloadStatement);
+
 
 module.exports = router;

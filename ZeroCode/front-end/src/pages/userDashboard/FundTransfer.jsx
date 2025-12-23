@@ -26,9 +26,9 @@ export default function FundTransfer() {
 
   // Fetch recipient details when user leaves input field
   const handleAccountBlur = async () => {
-    const acc = formData.recipientAccount.trim();
-    if (!acc) return;
-    if (acc === senderAccNo) {
+    const accNo = formData.recipientAccount.trim();
+    if (!accNo) return;
+    if (accNo === senderAccNo) {
       setFormData((prev) => ({ ...prev, recipientName: "" }));
       return setMessage({
         type: "danger",
@@ -37,12 +37,12 @@ export default function FundTransfer() {
     }
 
     try {
-      const res = await axios.get(`http://localhost:8000/api/accounts/${acc}`);
+      const res = await axios.get(`http://localhost:8000/api/accounts/${accNo}`);
 
       if (res.data && res.data.account) {
         setFormData((prev) => ({
           ...prev,
-          recipientName: res.data.account.name,
+          recipientName: res.data.account.fullName,
         }));
       } else {
         setFormData((prev) => ({ ...prev, recipientName: "" }));

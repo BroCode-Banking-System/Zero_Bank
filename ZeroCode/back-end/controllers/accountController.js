@@ -1,10 +1,9 @@
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
+const PDFDocument = require("pdfkit");
+const Transaction = require("../models/transactionModel");
 
-/**
- * Generate a unique 12-digit account number
- */
 const generateAccountNumber = async () => {
   let accNo;
   let exists = true;
@@ -17,10 +16,6 @@ const generateAccountNumber = async () => {
   return accNo;
 };
 
-/**
- * @desc Create a new account
- * @route POST /api/accounts
- */
 const createAccount = async (req, res) => {
   try {
     const {
@@ -35,6 +30,7 @@ const createAccount = async (req, res) => {
       password,
       language,
       consent,
+      gender,
     } = req.body;
 
     const aadhaardoc = req.files?.aadhaardoc?.[0]?.filename || null;
@@ -63,6 +59,7 @@ const createAccount = async (req, res) => {
       status: "pending",
       accNo,
       password: hashedPassword,
+      gender,
     });
 
     await newAccount.save();
@@ -77,10 +74,6 @@ const createAccount = async (req, res) => {
   }
 };
 
-/**
- * @desc Get all accounts
- * @route GET /api/admin/accounts
- */
 const getAllAccounts = async (req, res) => {
   try {
     const accounts = await Account.find({
@@ -94,10 +87,6 @@ const getAllAccounts = async (req, res) => {
   }
 };
 
-/**
- * @desc Get pending accounts
- * @route GET /api/admin/accounts/pending
- */
 const getPendingAccounts = async (req, res) => {
   try {
     const pending = await Account.find({ status: "pending" }).sort({
@@ -111,10 +100,6 @@ const getPendingAccounts = async (req, res) => {
   }
 };
 
-/**
- * @desc Approve account
- * @route POST /api/admin/accounts/:id/approve
- */
 const approveAccount = async (req, res) => {
   try {
     const acc = await Account.findById(req.params.id);
@@ -130,10 +115,6 @@ const approveAccount = async (req, res) => {
   }
 };
 
-/**
- * @desc Freeze (reject) account
- * @route POST /api/admin/accounts/:id/freeze
- */
 const freezeAccount = async (req, res) => {
   try {
     const acc = await Account.findById(req.params.id);
@@ -149,59 +130,103 @@ const freezeAccount = async (req, res) => {
   }
 };
 
-/**
- * NEW: Fetch account details by Account Number
- * @route GET /api/accounts/:accNo
- */
-// 
-
-const getAccountByAccNo = async (req, res) => {
+const getAccountByEmail = async (req, res) => {
   try {
-    const accNo = req.params.accNo.trim();
+    const email = req.params.email;
 
-    // Match string or number
-    const account = await Account.findOne({
-      $or: [
-        { accNo: accNo },
-        { accNo: Number(accNo) },
-      ],
-    });
+    const account = await Account.findOne({ email });
 
-    // Case 1: Account not found
     if (!account) {
-      return res.status(404).json({
-        success: false,
-        message: "Account not exists",
-      });
+      return res.status(404).json({ message: "Account not found" });
     }
 
-    // Case 2: Account found but not active
     if (account.status !== "active") {
-      return res.status(403).json({
-        success: false,
-        message: "Account is not active",
-      });
+      return res.status(403).json({ message: "Account not active" });
     }
 
-    // Case 3: Active account → send full name
-    return res.json({
-      success: true,
-      account: {
-        name: account.fullName,
-        accNo: account.accNo,
-        // ifsc: account.ifscCode,
-      },
-    });
-
+    res.json(account); // send FULL account
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
+const downloadStatement = async (req, res) => {
+  try {
+    const { accNo } = req.params;
+
+    // Fetch account
+    const account = await Account.findOne({ accNo });
+    if (!account) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    // Fetch SUCCESS transactions related to this account
+    const transactions = await Transaction.find({
+      status: "Success",
+      $or: [
+        { recipientAccount: accNo },     // Credit
+        { senderId: account._id.toString() } // Debit
+      ]
+    }).sort({ createdAt: -1 });
+
+    // Create PDF
+    const doc = new PDFDocument({ margin: 40, size: "A4" });
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=statement-${accNo}.pdf`
+    );
+
+    doc.pipe(res);
+
+    // ===== HEADER =====
+    doc.fontSize(18).text("ZeroBank Account Statement", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(12);
+    doc.text(`Account Holder: ${account.fullName}`);
+    doc.text(`Account Number: ${account.accNo}`);
+    doc.text(`Email: ${account.email}`);
+    doc.text(`Current Balance: ₹${account.balance}`);
+    doc.moveDown();
+
+    // ===== TABLE HEADER =====
+    doc.font("Helvetica-Bold");
+    doc.text("Date                              Type         Amount          Description");
+    doc.moveDown(0.5);
+    doc.font("Helvetica");
+
+    // ===== TRANSACTIONS =====
+    transactions.forEach(tx => {
+      doc.text(
+        `${tx.createdAt.toDateString()}         ${tx.type.padEnd(6)}        ₹${tx.amount}                 ${tx.description || "-"}`
+      );
+    });
+
+    doc.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to generate statement" });
+  }
+};
+
+const getAccountByAccNo = async (req, res) => {
+  try {
+    const account = await Account.findOne({
+      accNo: req.params.accNo,
+      status: "active",
+    }).select("fullName accNo");
+
+    if (!account) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    res.json({ account });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 module.exports = {
   createAccount,
@@ -209,5 +234,7 @@ module.exports = {
   getPendingAccounts,
   approveAccount,
   freezeAccount,
-  getAccountByAccNo, 
+  getAccountByEmail,
+  downloadStatement,
+  getAccountByAccNo
 };

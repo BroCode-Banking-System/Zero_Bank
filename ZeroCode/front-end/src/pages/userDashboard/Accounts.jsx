@@ -1,53 +1,92 @@
-// AccountDetails.jsx
-import React from "react";
-import Card from "react-bootstrap/Card";
+// front-end/src/pages/userDashboard/Accounts.jsx
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Button from "react-bootstrap/Button";
-import { 
-  FaRegCreditCard, 
-  FaUniversity, 
-  FaCoins, 
-  FaMapMarkerAlt, 
-  FaCodeBranch, 
-  FaCalendarAlt, 
-  FaCheckCircle, 
-  FaDownload, 
-  FaEdit 
+import Card from "react-bootstrap/Card";
+import { useParams } from "react-router-dom";
+import {
+  FaRegCreditCard,
+  FaUniversity,
+  FaCoins,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaCheckCircle,
+  FaDownload
 } from "react-icons/fa";
 
 export default function AccountDetails() {
-  const accountDetails = [
-    {icon: <FaRegCreditCard />, label: "Full Name", value: "John Doe" },
-    {icon: <FaUniversity />, label: "Email", value: "john.doe@example.com" },
-    {icon: <FaCoins />, label: "Mobile", value: "+91 9876543210" },
-    {icon: <FaMapMarkerAlt />, label: "Address", value: "123, Park Street, Kolkata" },
-    { icon: <FaRegCreditCard />, label: "Account Number", value: "1234 5678 9012" },
-    { icon: <FaUniversity />, label: "Account Type", value: "Savings Account" },
-    { icon: <FaCoins />, label: "Balance", value: "₹1,25,000.50" },
-    { icon: <FaMapMarkerAlt />, label: "Branch", value: "Kolkata Main Branch" },
-    { icon: <FaCodeBranch />, label: "IFSC Code", value: "BANK0001234" },
-    { icon: <FaCalendarAlt />, label: "Opening Date", value: "15th Jan 2020" },
-    { icon: <FaCheckCircle />, label: "Status", value: "Active" },
+  const [account, setAccount] = useState(null);
+  const [error, setError] = useState("");
+
+  const email = localStorage.getItem("email");
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8000/api/accounts/email/${email}`)
+      .then(res => setAccount(res.data))
+      .catch(() => setError("Account not found: " + email));
+  }, [email]);
+
+  if (error) return <p className="text-danger text-center">{error}</p>;
+  if (!account) return <p className="text-center">Loading account...</p>;
+
+  const downloadStatement = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/accounts/${account.accNo}/statement`,
+        { responseType: "blob" }
+      );
+
+      if (res.data.size === 0) {
+        alert("No transactions found");
+        return;
+      }
+
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `statement-${account.accNo}.pdf`;
+      link.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to download account statement");
+    }
+  };
+
+  const details = [
+    { icon: <FaRegCreditCard />, label: "Full Name", value: account.fullName },
+    { icon: <FaUniversity />, label: "Email", value: account.email },
+    { icon: <FaCoins />, label: "Mobile", value: account.mobile },
+    { icon: <FaRegCreditCard />, label: "Account Number", value: account.accNo },
+    { icon: <FaUniversity />, label: "Account Type", value: account.accountType },
+    { icon: <FaCoins />, label: "Balance", value: `₹${account.balance}` },
+    { icon: <FaMapMarkerAlt />, label: "City", value: account.city },
+    {
+      icon: <FaCalendarAlt />,
+      label: "Opening Date",
+      value: new Date(account.createdAt).toDateString()
+    },
+    { icon: <FaCheckCircle />, label: "Status", value: account.status }
   ];
 
   return (
-    <div className="container mt-4 p-4">
-      
-      {/* Account Information Card */}
-      <Card className="shadow rounded-4 p-3 mb-4">
-        <Card.Header className="bg-primary text-white rounded-top-4 d-flex align-items-center mb-3">
-          <FaRegCreditCard className="me-2" />
-          <h4 className="mb-0">Account Information</h4>
+    <div className="container mt-4">
+      <Card className="shadow p-3 rounded-4">
+        <Card.Header className="bg-primary text-white">
+          <h4>Account Information</h4>
         </Card.Header>
 
-        <div className="row g-3">
-          {accountDetails.map((item, idx) => (
-            <div key={idx} className="col-md-6">
-              <div className={`d-flex align-items-center gap-3 p-3 rounded-3 ${item.bg} shadow-sm`}>
-                <div className="bg-white text-dark rounded-circle d-flex justify-content-center align-items-center" style={{ width: "35px", height: "35px" }}>
-                  {item.icon}
-                </div>
+        <div className="row mt-3 g-3">
+          {details.map((item, i) => (
+            <div key={i} className="col-md-6">
+              <div className="d-flex gap-3 p-3 shadow-sm rounded-3">
+                <span className="fs-4 text-primary">{item.icon}</span>
                 <div>
-                  <div className="small">{item.label}</div>
+                  <small className="text-muted">{item.label}</small>
                   <div className="fw-bold">{item.value}</div>
                 </div>
               </div>
@@ -56,15 +95,17 @@ export default function AccountDetails() {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-4 d-flex gap-3">
-          <Button variant="success" className="d-flex align-items-center gap-2">
-            <FaDownload /> Download Statement
-          </Button>
-          <Button variant="warning" className="d-flex align-items-center gap-2">
-            <FaEdit /> Update Info
-          </Button>
-        </div>
+        <Button
+          variant="success"
+          className="mt-4 d-flex w-50 align-items-center gap-2"
+          onClick={downloadStatement}
+        >
+          <FaDownload /> Download Account Statement
+        </Button>
+
+
       </Card>
     </div>
   );
 }
+

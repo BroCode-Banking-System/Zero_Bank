@@ -43,7 +43,7 @@ exports.getDashboardStats = async (req, res) => {
       {
         $match: {
           createdAt: { $gte: today, $lt: tomorrow },
-          status: "completed",
+          status: "Success",
         },
       },
       {
@@ -67,11 +67,25 @@ exports.getDashboardStats = async (req, res) => {
   }
 };
 
+// Get recent transactions (Admin)
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.find()
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    res.status(200).json(transactions);
+  } catch (err) {
+    console.error("Error fetching transactions:", err);
+    res.status(500).json({ message: "Failed to fetch transactions" });
+  }
+};
+
 // ==============================
-// 🏦 Account Management
+// Account Management
 // ==============================
 
-// ✅ Fetch all accounts
+// Fetch all accounts
 exports.getAllAccounts = async (req, res) => {
   try {
     const accounts = await Account.find();
@@ -81,7 +95,6 @@ exports.getAllAccounts = async (req, res) => {
     res.status(500).json({ message: "Server error while fetching accounts" });
   }
 };
-
 
 // Approve account + auto create customer
 exports.approveAccount = async (req, res) => {
@@ -135,7 +148,6 @@ exports.approveAccount = async (req, res) => {
     res.status(500).json({ message: "Error approving account" });
   }
 };
-
 
 // Freeze account
 exports.freezeAccount = async (req, res) => {
@@ -199,41 +211,5 @@ exports.deleteUser = async (req, res) => {
     res.json({ message: "User deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }
-};
-
-
-// ==============================
-// 🔐 Admin Password Management
-// ==============================
-
-exports.changeAdminPassword = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { oldPassword, newPassword } = req.body;
-
-    // 1️⃣ Check if admin exists
-    const admin = await AdminUsers.findById(id);
-    if (!admin) {
-      return res.status(404).json({ message: "Admin not found" });
-    }
-
-    // 2️⃣ Verify old password
-    const isMatch = await bcrypt.compare(oldPassword, admin.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Old password is incorrect" });
-    }
-
-    // 3️⃣ Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    // 4️⃣ Update admin password
-    admin.password = hashedPassword;
-    await admin.save();
-
-    res.status(200).json({ message: "Password updated successfully!" });
-  } catch (err) {
-    console.error("Error changing password:", err);
-    res.status(500).json({ message: "Server error while updating password" });
   }
 };

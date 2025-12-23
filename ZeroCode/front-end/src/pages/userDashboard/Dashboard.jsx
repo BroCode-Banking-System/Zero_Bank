@@ -30,7 +30,6 @@ export default function UserDashboard() {
   const fullname = localStorage.getItem("fullName");
   const role = localStorage.getItem("role"); // ADD THIS LINE
 
-
   useEffect(() => {
     if (userId) {
       axios
@@ -196,8 +195,6 @@ export default function UserDashboard() {
             </small>
           </div>
         </div>
-
-
       </div>
 
       {/* Recent Activity */}
